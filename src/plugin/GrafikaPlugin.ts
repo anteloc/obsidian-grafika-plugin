@@ -86,7 +86,7 @@ export default class GrafikaPlugin extends Plugin {
     private loadGraphApis() {
         const { openaiApiKey, openaiModel } = this.settings;
 
-        const plotAnalyzer = new GptPlotAnalyzer(openaiModel, openaiApiKey);
+        const plotAnalyzer = new GptPlotAnalyzer(this.settings.openai);
         const graphApis = buildGraphApis(this.pluginUtils);
 
         // Register APIs

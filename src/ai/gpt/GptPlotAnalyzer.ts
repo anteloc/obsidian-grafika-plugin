@@ -1,52 +1,54 @@
 import OpenAI from "openai";
 import { ChatCompletionCreateParamsNonStreaming } from "openai/resources";
 import { pngImgData } from "../../utils/Utils";
-import { DEFAULT_MAX_WORDS } from "./GptModels";
 
 export class GptPlotAnalyzer {
     constructor(
-        private model: string,
-        private apiKey: string,
+        private openaiSettings: {
+            apiKey: string;
+            model: string;
+            systemPrompt: string;
+            analyzeImagePrompt: string;
+            maxWords: number;
+        },
     ) {}
 
-    public async analyze(
-        prompt: string,
-        imageData: URL,
-    ): Promise<string | null> {
+    public async analyze(imageData: URL): Promise<string | null> {
+        const { apiKey, model } = this.openaiSettings;
+
         const image = await pngImgData(imageData);
 
         const openai = new OpenAI({
-            apiKey: this.apiKey,
+            apiKey,
             // WARNING: This is a security risk, added here after a
             // warning message from the OpenAI API.
             dangerouslyAllowBrowser: true,
         });
 
         // Just one image for now
-        const requestBody = await this.requestBody(
-            prompt,
-            DEFAULT_MAX_WORDS,
-            image,
-        );
+        const requestBody = await this.requestBody(image);
 
-        console.log(`Ongoing ${this.model} request...`, requestBody);
+        console.log(`Ongoing ${model} request...`, requestBody);
 
         const response = await openai.chat.completions.create(requestBody);
 
-        console.log(`Response received for ${this.model} request`);
+        console.log(`Response received for ${model} request`);
 
         return response.choices[0].message.content;
     }
 
     private async requestBody(
-        prompt: string,
-        maxWords: number,
         image: URL,
     ): Promise<ChatCompletionCreateParamsNonStreaming> {
+        const { model, maxWords, analyzeImagePrompt, systemPrompt } =
+            this.openaiSettings;
+
         const userContent = [];
 
-        // TODO Maybe modify prompt somehow in order to limit/reduce the length of the answer, explain how to use the attachments, etc?
-        const userPrompt = { type: "text", text: prompt };
+        const userPrompt = {
+            type: "text",
+            text: `${analyzeImagePrompt}. Use a maximum of ${maxWords} for the answer.`,
+        };
 
         const plotImage = {
             type: "image_url",
@@ -59,15 +61,13 @@ export class GptPlotAnalyzer {
         userContent.push(userPrompt, plotImage);
 
         const body = {
-            model: this.model,
+            model: model,
             n: 1,
             max_tokens: 1000,
             messages: [
                 {
                     role: "system",
-                    content: `You are an expert in data science, data plotting and also data and plot interpretation and analysis. 
-                You are asked to analyze the following plot image and provide a detailed answer to the question(s) or task(s) 
-                described in the message together with the image, using ${maxWords} words maximum for the answer.`,
+                    content: systemPrompt,
                 },
                 {
                     role: "user",
