@@ -22,6 +22,7 @@ export class GraphApiUtils {
             tableData: this.tableData,
             fileData: this.fileData,
             assetUrl: this.pluginUtils.assetUrl.bind(this.pluginUtils),
+            apiKey: this.pluginUtils.apiKey.bind(this.pluginUtils),
         };
     }
 

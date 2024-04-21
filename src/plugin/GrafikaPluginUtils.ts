@@ -7,9 +7,11 @@ import {
     Vault,
     Workspace,
 } from "obsidian";
+import { GrafikaPluginSettings } from "./GrafikaPluginSettings";
 
 export class GrafikaPluginUtils {
     constructor(
+        private pluginSettings: GrafikaPluginSettings,
         private vault: Vault,
         private metadataCache: MetadataCache,
         private workspace: Workspace,
@@ -26,13 +28,20 @@ export class GrafikaPluginUtils {
     }
 
     public get fileContents(): (filePath: string) => Promise<string | null> {
-        return  ((filePath: string) => this.fileContentsImpl(filePath, "text")).bind(this);
+        return ((filePath: string) =>
+            this.fileContentsImpl(filePath, "text")).bind(this);
+    }
+
+    public apiKey(externalApiName: string) {
+        return this.pluginSettings.externalApiKeys.find(
+            (k) => k.apiName === externalApiName,
+        )?.key;
     }
 
     public async assetUrl(filePath: string): Promise<string> {
         const contents = await this.fileContentsImpl(filePath, "binary");
 
-        if(!contents) {
+        if (!contents) {
             throw new Error(`File not found: ${filePath}`);
         }
 

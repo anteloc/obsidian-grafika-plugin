@@ -36,14 +36,17 @@ export default class GrafikaPlugin extends Plugin {
     }
 
     async onload() {
+        await this.loadSettings();
+        
         this.graphApis = {};
+        
         this.pluginUtils = new GrafikaPluginUtils(
+            this.settings,
             this.app.vault,
             this.app.metadataCache,
             this.app.workspace,
         );
 
-        await this.loadSettings();
         this.loadGraphApis();
 
         this.addSettingTab(new GrafikaSettingTab(this.app, this));
