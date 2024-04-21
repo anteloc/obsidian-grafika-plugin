@@ -14,7 +14,7 @@ export class SandboxedRenderer {
         private dependencies: ApiDependency[],
         private sandboxedScreenshotSetup: (screenshotCtx) => void,
         private screenshotHandler: (
-            captured: { dataUrl: URL; mimeType: string },
+            captured: { dataUrl: URL },
             responseId: string,
         ) => void,
         private graphContainerHtml: string,
@@ -95,7 +95,7 @@ export class SandboxedRenderer {
                 console.log("Error on sandboxed iframe:", e);
             },
             // onCodeError
-            this.handleOnCodeError.bind(this),
+            this.handleCodeError.bind(this),
             // onScreenshotCaptured
             this.handleScreenshotCaptured.bind(this),
         );
@@ -132,12 +132,12 @@ export class SandboxedRenderer {
         switch (message.type) {
             case "screenshot":
                 //console.log("Sandbox: received screenshot request event: ", evt);
-                const captured = screenshotContext.captureScreenshot();
+                const imgDataUrl = screenshotContext.captureScreenshot();
 
                 window.postMessage(
                     {
                         type: "screenshotCaptured",
-                        captured,
+                        captured: { imgDataUrl },
                         responseId: message.requestId,
                     },
                     "app://obsidian.md",
@@ -165,13 +165,13 @@ export class SandboxedRenderer {
     }
 
     protected handleScreenshotCaptured(
-        captured: { dataUrl: URL; mimeType: string },
+        captured: { dataUrl: URL },
         responseId: string,
     ) {
         this.screenshotHandler(captured, responseId);
     }
 
-    protected handleOnCodeError(codeError: Error) {
+    protected handleCodeError(codeError: Error) {
         console.log(
             "SandboxRenderer: codeError on sandboxed script",
             codeError,

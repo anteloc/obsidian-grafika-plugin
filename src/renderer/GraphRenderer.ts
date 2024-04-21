@@ -6,11 +6,13 @@ import { v4 as uuid } from "uuid";
 
 export class GraphRenderer {
     private sandoxedRenderer: SandboxedRenderer;
+    private analyzingNotice: any;
 
     constructor(
         private sourceCode: string,
         private api: AbstractGraphApi,
         private analyzer: GptPlotAnalyzer,
+        private alertNotice: (message: string, duration: number) => void,
         private markdownRenderer: (
             markdown: string,
             markdownContainer: HTMLElement,
@@ -48,7 +50,7 @@ export class GraphRenderer {
     }
 
     private handleScreenshotCaptured(
-        captured: { dataUrl: URL; mimeType: string },
+        captured: { dataUrl: URL },
         responseId: string,
     ) {
         if (responseId.startsWith("analyze-")) {
@@ -56,7 +58,9 @@ export class GraphRenderer {
         }
     }
 
-    protected async analyzePlot(captured: { dataUrl: URL; mimeType: string }) {
+    protected async analyzePlot(captured: { imgDataUrl: URL }) {
+        const analyzingNotice = this.alertNotice("Analyzing plot...", 0);
+
         const prompt = `Analyze the attached graph plot image and provide the following informative sections:
             1. Plot Description: describe the plot meaning in a maximum of 20 words
             2. Insights: In a maximum of 100 words, provide insights about the meaning of the plot about:
@@ -70,20 +74,30 @@ export class GraphRenderer {
                 - If none of the above, analyze what future implications can be expected taking into account the whole plot and not only an X axis
             3. Conclusion: Provide a conclusion based on the insights and foresight sections, in a maximum of 100 words`;
 
-        let result = await this.analyzer.analyze(
-            prompt,
-            captured.dataUrl,
-            captured.mimeType,
-        );
+            // debugger
+        try {
+            let result = await this.analyzer.analyze(
+                prompt,
+                captured.imgDataUrl,
+            );
 
-        result = result || "**ERROR** Failed to analyze the plot image.";
+            result = result || "**ERROR** Failed to analyze the plot image.";
 
-        await this.markdownRenderer(
-            this.makeCallout("ai-analysis", "AI", result),
-            this.rendererEls.analysisResultsContainer,
-        );
+            await this.markdownRenderer(
+                this.makeCallout("ai-analysis", "AI", result),
+                this.rendererEls.analysisResultsContainer,
+            );
 
-        console.log("analyzePlot: GPT Result:", result);
+            console.log("analyzePlot: GPT Result:", result);
+        } catch (error) {
+            console.error("analyzePlot: GPT Error:", error);
+            await this.markdownRenderer(
+                this.makeCallout("error", "AI Error", error.message),
+                this.rendererEls.analysisResultsContainer,
+            );
+        } finally {
+            analyzingNotice.hide();
+        }
     }
 
     private makeCallout(type: string, header: string, text: string) {

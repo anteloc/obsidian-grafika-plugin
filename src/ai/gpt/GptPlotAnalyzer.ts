@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { ChatCompletionCreateParamsNonStreaming } from "openai/resources";
-import { svg2png } from "../../utils/Utils";
+import { pngImgData } from "../../utils/Utils";
 import { DEFAULT_MAX_WORDS } from "./GptModels";
 
 export class GptPlotAnalyzer {
@@ -12,12 +12,8 @@ export class GptPlotAnalyzer {
     public async analyze(
         prompt: string,
         imageData: URL,
-        mimeType: string,
     ): Promise<string | null> {
-        // FIXME If the image is actually an SVG, convert it to a PNG before sending it to the GPT API
-
-        const image =
-            mimeType === "image/svg+xml" ? await svg2png(imageData) : imageData;
+        const image = await pngImgData(imageData);
 
         const openai = new OpenAI({
             apiKey: this.apiKey,

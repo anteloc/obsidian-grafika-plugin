@@ -3,6 +3,7 @@ import {
     MarkdownView,
     MarkdownRenderer,
     MarkdownPostProcessorContext,
+    Notice,
 } from "obsidian";
 
 import { IGraphApi } from "../graph/core/IGraphApi";
@@ -131,6 +132,7 @@ export default class GrafikaPlugin extends Plugin {
                 sourceCode,
                 api,
                 plotAnalyzer,
+                (message, duration) => new Notice(message, duration),
                 this.markdownRenderer(ppc.sourcePath),
                 {
                     rendererContainer,

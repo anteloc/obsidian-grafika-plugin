@@ -55,9 +55,9 @@ export class Sandbox {
         private scripts: SandboxedScript[],
         private isShared: boolean,
         private onerror: (e: string) => void,
-        private onCodeError: (codeError: Error) => void,
-        private onScreenshotCaptured: (
-            imgDataUrl: URL,
+        private handleCodeError: (codeError: Error) => void,
+        private handleScreenshotCaptured: (
+            captured: { imgDataUrl: URL },
             responseId: string,
         ) => void,
     ) {
@@ -160,7 +160,7 @@ export class Sandbox {
     // FIXME Add proper types according to window.postMessage() signature
     public sendMessage(type: string, message: object) {
         // console.log("Sending message to sandboxed iframe contentWindow:", this.sandboxed.contentWindow, evt, message);
-            this.sandboxed.contentWindow?.postMessage({ type, ...message }, "*");
+        this.sandboxed.contentWindow?.postMessage({ type, ...message }, "*");
     }
 
     private handleMessage(event: MessageEvent) {
@@ -169,10 +169,10 @@ export class Sandbox {
         switch (message.type) {
             case "codeError":
                 message.error.sourceCode = this.srcdoc;
-                this.onCodeError(message.error);
+                this.handleCodeError(message.error);
                 break;
             case "screenshotCaptured":
-                this.onScreenshotCaptured(message.captured, message.responseId);
+                this.handleScreenshotCaptured(message.captured, message.responseId);
                 break;
             case "error":
             case "unhandledRejection":

@@ -19,13 +19,7 @@ export class EchartsApi extends AbstractGraphApi {
             const chart = originalInit(el, theme, opts);
 
             // Make a screenshot function available to be used in the context
-            screenshotCtx.captureScreenshot = () => {
-                const chartOpts = chart.getOption();
-                const renderer = chartOpts.renderer || "canvas"; 
-                const mimeType = renderer === "svg" ? "image/svg+xml" : "image/png";
-                const imgDataUrl = chart.getDataURL({ excludeComponents: ["toolbox"] });
-                return { mimeType, dataUrl: imgDataUrl };
-            }
+            screenshotCtx.captureScreenshot = () => chart.getDataURL({ excludeComponents: ["toolbox"] });
 
             return chart;
         };
