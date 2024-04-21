@@ -1,3 +1,7 @@
+# FIXME
+- Export to PDF not working properly, plots are missing from the PDF
+- Zooming in on the page with "Ctrl +" affects plot renderings and animations.
+- Weather data 
 ## Basic Plot
 ### Tips
 - Rendering is set to "canvas" by default, change by setting the "renderer" option to "svg" to save on computing resources.
@@ -118,7 +122,6 @@ const treemapOption = {
 ```echarts-js
 const myChart = echarts.init(graphContainer);
 
-
 async function updateChart() {
   const salesData = await utils.tableData("#sales-table", true);
 
@@ -184,16 +187,19 @@ setInterval(updateChart, 5000);
 
 
 ## Public Data + REST Endpoint + Live Update
+### Tips
+- Press on "Analyze with AI" button and after a few seconds, an AI-generated plot analysis text will appear under the plot. 
+- You will need an OpenAI account with access to gpt-4-turbo and configure an API key in Grafika Settings for this to work!
 
-```echarts-js-disabled
+```echarts-js
 // debugger
-const openMeteoUrl =
-  "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m,relative_humidity_2m&past_days=1&forecast_days=1";
+const place = "London"
+const wttrUrl = `https://wttr.in/${place}?2&format=j1`;
 
-const colors = ["#5470C6", "#91CC75", "#EE6666"];
+const colors = ["#add8e6", "#91CC75", "#EE6666"];
 
 const myChart = echarts.init(graphContainer, null, {
-  renderer: "svg",
+  renderer: "canvas",
   width: "700px",
   height: "700px",
 });
@@ -244,16 +250,18 @@ const baseOption = {
     {
       type: "value",
       name: "Relative Humidity",
+      max: 100,
+      min: 0,
       position: "right",
       alignTicks: true,
       axisLine: {
         show: true,
         lineStyle: {
-          color: colors[1],
+          color: colors[0],
         },
       },
       axisLabel: {
-        formatter: "{value} %",
+        formatter: (value) => Math.floor(value) + " %",
       },
     },
   ],
@@ -265,13 +273,16 @@ const baseOption = {
       lineStyle: {
         color: colors[2],
       },
+      itemStyle: {
+        color: colors[2],
+      },
     },
     {
       name: "Relative Humidity",
       data: [],
       type: "bar",
       itemStyle: {
-        color: colors[1],
+        color: colors[0],
       },
       yAxisIndex: 1,
     },
@@ -281,7 +292,7 @@ const baseOption = {
 myChart.setOption(baseOption);
 
 async function updateData() {
-  const fetchData = await fetch(openMeteoUrl, {
+  const fetchData = await fetch(wttrUrl, {
     headers: {
       accept: "application/json; charset=utf8;",
     },
@@ -290,21 +301,41 @@ async function updateData() {
 
   const data = await fetchData.json();
 
-  const tData = _.zip(data.hourly.time, data.hourly.temperature_2m);
-  const rhData = _.zip(data.hourly.time, data.hourly.relative_humidity_2m);
+  const weatherData = data.weather
+    .flatMap(({ date, hourly }) =>
+      hourly.map(({ time, tempC, humidity }) => ({
+        date,
+        time,
+        tempC,
+        humidity,
+      }))
+    )
+    .map(({ date, time, tempC, humidity }) => {
+      const hhmm = v.chain(time).padLeft(4, "0").insert(":", 2).value();
+      const dateTime = `${date}T${hhmm}`;
+      console.log(dateTime);
+      const temperature = parseFloat(tempC);
+      const rel_humidity = parseFloat(humidity);
+
+      return { dateTime, temperature, rel_humidity };
+    });
+
+  const dateTimes = weatherData.map(({ dateTime }) => dateTime);
+  const temperatures = weatherData.map(({ dateTime, temperature }) => [dateTime, temperature]);
+  const humidities = weatherData.map(({ dateTime, rel_humidity }) => [dateTime, rel_humidity]);
 
   const option = {
     xAxis: {
-      data: data.hourly.time,
+      data: dateTimes,
     },
     series: [
       {
         name: "Temperature",
-        data: tData,
+        data: temperatures,
       },
       {
         name: "Relative Humidity",
-        data: rhData,
+        data: humidities,
       },
     ],
   };
@@ -322,8 +353,11 @@ setInterval(updateData, 60000);
 
 
 ## Globe 3D
+### Tips
+- These are the near real-time temperatures for the 500 most populated places in the world.
+- If there is no data, e. g. Open Meteo returns a "Too Many Requests" (HTTP 429 error), the temperature bars will be missing until Open Meteo starts returning data again.
 
-```echarts-js-disabled
+```echarts-js
 const openMeteoUrlTempl =
   "https://api.open-meteo.com/v1/forecast?latitude=%s&longitude=%s&hourly=temperature_2m&start_hour=%s&end_hour=%s";
 
@@ -363,7 +397,7 @@ const pieces = [
   { min: 5, max: 10, color: rangesPalette[6] },
   { min: 10, max: 20, color: rangesPalette[7] },
   { min: 20, max: 30, color: rangesPalette[8] },
-  { min: 40, color: rangesPalette[9] },
+  { min: 30, color: rangesPalette[9] },
 ];
 
 const baseOption = {
@@ -379,7 +413,7 @@ const baseOption = {
       },
     },
     viewControl: {
-      autoRotate: false,
+      autoRotate: true,
     },
   },
   visualMap: {
@@ -413,9 +447,9 @@ const baseOption = {
           return `${d.data[2]} ${units}`;
         },
       },
-      barSize: 2,
+      barSize: 0.25,
       minHeight: 5,
-      maxHeight: 50,
+      maxHeight: 10,
       silent: true,
     },
   ],
@@ -462,7 +496,7 @@ async function updatePlot() {
 
   // Added as a workaround, to avoid the minimum temperature
   // to have a 3D bar with height = 0
-  data.push([0.01, 0.01, -101]);
+  data.push([0.01, 0.01, -70]);
 
   const option = {
     series: [
@@ -475,7 +509,7 @@ async function updatePlot() {
 
   myChart.setOption(option);
 }
-
+// debugger
 const myChart = echarts.init(graphContainer);
 
 myChart.setOption(baseOption);

@@ -1,6 +1,7 @@
-
 # FIXME
 - Export to PDF not working properly, plots in the PDF are too big and don't fit page width.
+- Zooming in on the page with "Ctrl +" affects plot renderings and animations.
+- "Analyze with AI" not working yet.
 
 ## ChartJs: Basic Plot
 ### Tips
@@ -25,6 +26,7 @@ const data = {
     hoverOffset: 4
   }]
 };
+
 
 const config = {
   type: 'pie',

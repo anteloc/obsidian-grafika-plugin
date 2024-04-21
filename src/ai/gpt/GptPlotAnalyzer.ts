@@ -33,9 +33,11 @@ export class GptPlotAnalyzer {
             image,
         );
 
-        console.log("GPT Request body:", requestBody);
+        console.log(`Ongoing ${this.model} request...`, requestBody);
 
         const response = await openai.chat.completions.create(requestBody);
+
+        console.log(`Response received for ${this.model} request`);
 
         return response.choices[0].message.content;
     }
