@@ -1,14 +1,24 @@
 {
-	"name": "obsidian-sample-plugin",
-	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"name": "obsidian-grafika-plugin",
+	"version": "0.5.0",
+	"description": "Obsidian plugin for embedding plots, charts and graphs in markdown documents, currently supporting Echarts, Chart.js and vis.js network and timeline",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
-	"keywords": [],
+	"keywords": [
+		"obsidian",
+		"plugin",
+		"grafika",
+		"plot",
+		"chart",
+		"graph",
+		"vis.js",
+		"chart.js",
+		"observable-plot"
+	],
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
@@ -18,7 +28,27 @@
 		"builtin-modules": "3.3.0",
 		"esbuild": "0.17.3",
 		"obsidian": "latest",
+		"prettier": "3.2.5",
 		"tslib": "2.4.0",
 		"typescript": "4.7.4"
+	},
+	"dependencies": {
+		"@observablehq/plot": "^0.6.14",
+		"@observablehq/stdlib": "^5.8.6",
+		"chart.js": "^4.4.2",
+		"chroma-js": "^2.1.2",
+		"echarts": "^5.5.0",
+		"echarts-gl": "^2.0.9",
+		"eslint": "^8.57.0",
+		"htl": "^0.3.1",
+		"openai": "^4.37.1",
+		"parse-markdown-table": "^0.0.6",
+		"require-text": "^0.0.1",
+		"timeline-arrows": "^4.6.0",
+		"underscore": "^1.13.6",
+		"uuid": "^8.3.2",
+		"vis-network": "^9.1.9",
+		"vis-timeline": "^7.7.3",
+		"voca": "^1.4.1"
 	}
 }

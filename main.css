@@ -1,0 +1,14 @@
+/* src/graph/visjs/styles.css */
+.vis-network-container {
+  width: 700px;
+  max-width: 700px;
+  height: 700px;
+  max-height: 700px;
+  margin: 0;
+  padding: 0;
+  cursor: default;
+  overflow: visible;
+  background: rgb(251, 250, 246);
+  border: 2px solid black;
+}
+/*# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsic3JjL2dyYXBoL3Zpc2pzL3N0eWxlcy5jc3MiXSwKICAic291cmNlc0NvbnRlbnQiOiBbIi52aXMtbmV0d29yay1jb250YWluZXIge1xuICAgIHdpZHRoOiA3MDBweDtcbiAgICBtYXgtd2lkdGg6IDcwMHB4O1xuICAgIGhlaWdodDogNzAwcHg7XG4gICAgbWF4LWhlaWdodDogNzAwcHg7XG4gICAgbWFyZ2luOiAwO1xuICAgIHBhZGRpbmc6IDA7XG4gICAgY3Vyc29yOiBkZWZhdWx0O1xuICAgIG92ZXJmbG93OiB2aXNpYmxlO1xuICAgIGJhY2tncm91bmQ6IHJnYigyNTEsIDI1MCwgMjQ2KTtcbiAgICBib3JkZXI6IDJweCBzb2xpZCBibGFjaztcbn0iXSwKICAibWFwcGluZ3MiOiAiO0FBQUE7QUFDSTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUFBOyIsCiAgIm5hbWVzIjogW10KfQo= */

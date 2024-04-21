@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
-	"version": "1.0.0",
-	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
-	"isDesktopOnly": false
+	"id": "grafika",
+	"name": "Grafika",
+	"version": "0.5.0",
+	"minAppVersion": "1.5.11",
+	"description": "Obsidian plugin for embedding plots, charts and graphs in markdown documents, currently supporting Echarts, Chart.js and vis.js network and timeline",
+	"author": "Carlos Antelo",
+	"authorUrl": "https://github.com/anteloc/obsidian-grafika-plugin",
+	"fundingUrl": "https://changeme",
+	"isDesktopOnly": true
 }
