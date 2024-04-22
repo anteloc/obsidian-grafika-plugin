@@ -3,6 +3,9 @@ import { ApiDependency } from "../core/IGraphApi";
 import { commonDependencies } from "../core/GraphCommonDependencies";
 import { apiDependencies } from "./ChartJsDependencies";
 
+const screenshotSetup = require("./sandboxed/screenshotSetup.js.src");
+const graphContainer = require("./sandboxed/graphContainer.html.src");
+
 export class ChartJsApi extends AbstractGraphApi {
     static PARENT_LANGUAGE = "javascript";
 
@@ -13,8 +16,11 @@ export class ChartJsApi extends AbstractGraphApi {
         ];
     }
 
-    public graphContainerHtml(_cls: string): string {
-        // TODO Keep it here until cls param can be used to set canvas's style
-        return `<canvas id="graph-container"></canvas>`;
+    protected screenshotSetupJs(): string {
+        return screenshotSetup;
+    }
+
+    protected graphContainerHtml(_cls: string): string {
+        return graphContainer;
     }
 }

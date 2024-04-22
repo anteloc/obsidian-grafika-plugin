@@ -1,0 +1,9 @@
+// Find the div element where the new graph will be drawn
+// TODO Implement the creenshotCtx.captureScreenshot() closure!
+function screenshotSetup(screenshotCtx) {
+    screenshotCtx.captureScreenshot = async () => {
+        const canvas = await html2canvas(document.querySelector("#graph-container"));
+        return canvas.toDataURL('image/png');
+    };
+}
+

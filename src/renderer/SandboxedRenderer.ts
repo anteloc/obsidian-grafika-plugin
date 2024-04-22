@@ -1,32 +1,42 @@
 import { blob2url } from "../utils/Utils";
-import { Sandbox, SandboxedScript } from "./Sandbox";
+import { Sandbox, SandboxPlaceholderValues, SandboxedScript } from "./Sandbox";
 import { ApiDependency } from "../graph/core/IGraphApi";
 
 import voca from "voca";
 
+// __API_NAME__ // -> API's apiName
+// __GRAPH_CONTAINER__ // -> API's graphContainerHtml
+        // __DEPENDENCIES_PREAMBLE__ // Generated from dependencies
+        // __SCREENSHOT_SETUP_FUNCTION__  // API's -> screenshotSetupJs
+        // __GRAPH_SOURCE_CODE__ // -> API's argument to get the rest of the code fragments
+
+export type SandboxedCodeFragments = {
+    apiName: string;
+    dependenciesPreamble?: string;
+    screenshotSetup: string;
+    graphContainer: string;
+    graphSourceCode: string;
+};
+
 export class SandboxedRenderer {
     private sandbox: Sandbox;
-    private sandboxedDependencyScripts: SandboxedScript[];
+    private dependenciesScripts: SandboxedScript[];
 
     constructor(
-        private sourceCode: string,
-        private apiName: string,
+        private codeFragments: SandboxedCodeFragments,
+        // private sourceCode: string,
+        // private apiName: string,
         private dependencies: ApiDependency[],
-        private sandboxedScreenshotSetup: (screenshotCtx) => void,
+        // private sandboxedScreenshotSetup: (screenshotCtx) => void,
         private screenshotHandler: (
             captured: { dataUrl: URL },
             responseId: string,
         ) => void,
-        private graphContainerHtml: string,
+        // private graphContainerHtml: string,
         private rendererContainer: HTMLElement,
     ) {
-        this.sandboxedDependencyScripts = this.dependencies.map(
-            ({ id, url, contents, type }) => ({
-                id,
-                src: url || (contents && blob2url(contents, "text/javascript")),
-                type: type === "module" ? "module" : undefined,
-            }),
-        );
+        this.dependenciesScripts = this.sandboxedDependenciesScripts();
+        this.codeFragments.dependenciesPreamble = this.dependenciesPreamble();
     }
 
     public takeScreenshot(requestId: string) {
@@ -36,59 +46,87 @@ export class SandboxedRenderer {
     public async renderGraph() {
         // This is here in order to allow the Function() constructor to perform
         // several source code validations, like syntax errors, etc.
-        let graphFunction;
+        // let graphFunction;
 
-        try {
-            graphFunction = this.sandboxedGraphFunction()();
-        } catch (error) {
-            await this.renderError(
-                error.sourceCode,
-                error,
-                this.rendererContainer,
-            );
-            return;
-        }
+        // try {
+        //     graphFunction = this.sandboxedGraphFunction()();
+        // } catch (error) {
+        //     await this.renderError(
+        //         error.sourceCode,
+        //         error,
+        //         this.rendererContainer,
+        //     );
+        //     return;
+        // }
 
         // Dependencies will be added as <script> tags to the sandbox iframe,
         // which means the order of this array determines the order of the imports
-        const sandboxedScript = `
-            ${this.sandboxedDependenciesPreamble()}
-            // FIXME Verify that the original init() function is not patched more than once, given that 
-            // the sandboxed script is reloaded every time the source code is updated
+        // const sandboxedScript = `
+        //     ${this.sandboxedDependenciesPreamble()} // OK
+        //     // Screenshot setup function
+        //     function ${this.sandboxedScreenshotSetup.toString()}
 
-            // Screenshot setup function
-            function ${this.sandboxedScreenshotSetup.toString()}
+        //     const screenshotContext = {
+        //         captureScreenshot: null,
+        //     };
 
-            const screenshotContext = {
-                captureScreenshot: null,
-            };
+        //     sandboxedScreenshotSetup(screenshotContext);
 
-            sandboxedScreenshotSetup(screenshotContext);
+        //     // Message handler closure
+        //     let messageHandler = ${this.sandboxedMessageHandler.toString()} // Not needed in template
 
-            // Message handler closure
-            let messageHandler = ${this.sandboxedMessageHandler.toString()}
-
-            // FIXME Will a window.removeEventListener() be necessary?
-            // Check: If/when a sandboxed iframe is disposed, will this event listener be automatically removed?
+        //     // FIXME Will a window.removeEventListener() be necessary?
+        //     // Check: If/when a sandboxed iframe is disposed, will this event listener be automatically removed?
             
-            const graphContainer = document.getElementById('graph-container');
-            const graphFunction = ${graphFunction.toString()};
+        //     const graphContainer = document.getElementById('graph-container');
+        //     const graphFunction = ${graphFunction.toString()};
 
-            window.addEventListener("load", () => {
-                window.addEventListener("message", messageHandler, false);
-                graphFunction();
-            });
-        `;
+        //     window.addEventListener("load", () => {
+        //         window.addEventListener("message", messageHandler, false);
+        //         graphFunction();
+        //     });
+        // `;
 
-        const scripts = [
-            ...this.sandboxedDependencyScripts,
-            { id: "codeblock", type: "module", content: sandboxedScript },
-        ];
+        // const scripts = [
+        //     ...this.dependenciesScripts,
+        //     // { id: "codeblock", type: "module", content: sandboxedScript },
+        // ];
+
+        // Placeholders to replace in the sandboxed srcdoc.html.src template:
+        // __GRAPH_CONTAINER__ // -> API's graphContainerHtml
+        // __SCRIPTS__ // Generated from dependencies
+        // __DEPENDENCIES_PREAMBLE__ // Generated from dependencies
+        // __SCREENSHOT_SETUP_FUNCTION__  // API's -> screenshotSetupJs
+        // __GRAPH_SOURCE_CODE__ // -> API's argument to get the rest of the code fragments
+        // __API_NAME__ // -> API's apiName
+
+        /*
+        apiName: string;
+    dependenciesPreamble?: string;
+    screnshotSetup: string;
+    graphContainer: string;
+    graphSourceCode: string;
+        */
+        const {apiName: __API_NAME__, 
+            graphContainer: __GRAPH_CONTAINER__, 
+            dependenciesPreamble: __DEPENDENCIES_PREAMBLE__, 
+            screenshotSetup: __SCREENSHOT_SETUP_FUNCTION__, 
+            graphSourceCode: __GRAPH_SOURCE_CODE__} = this.codeFragments;
+
+        const placeholderValues: SandboxPlaceholderValues = {
+            __API_NAME__,
+            __GRAPH_CONTAINER__,
+            __DEPENDENCIES_PREAMBLE__,
+            __SCREENSHOT_SETUP_FUNCTION__,
+            __GRAPH_SOURCE_CODE__,
+        };
 
         this.sandbox = new Sandbox(
             this.rendererContainer,
-            this.graphContainerHtml,
-            scripts,
+            // this.graphContainerHtml,
+            placeholderValues,
+            this.dependenciesScripts,
+            // scripts,
             true,
             // TODO Not very useful for now, determine the error cases where this could be useful
             (e: string) => {
@@ -104,63 +142,82 @@ export class SandboxedRenderer {
     }
 
     // The returned value will be added as a string to the context of the renderer, i. e. sandboxedMessageHandler.toString()
-    protected sandboxedGraphFunction(): Function {
-        const asyncWrappedCode = `
-            return (async function () { 
-                const { utils } = top.app.plugins.plugins.grafika.apis.${this.apiName};
+    // protected sandboxedGraphFunction(): Function {
+    //     const asyncWrappedCode = `
+    //         return (async function () { 
+    //             const { utils } = top.app.plugins.plugins.grafika.apis.${this.apiName};
 
-                try {
-                    ${this.sourceCode} 
-                } catch(error) {
-                    window.postMessage({type: 'codeError', error}, 'app://obsidian.md');
-                }
-            });
-        `;
+    //             try {
+    //                 ${this.sourceCode} 
+    //             } catch(error) {
+    //                 window.postMessage({type: 'codeError', error}, 'app://obsidian.md');
+    //             }
+    //         });
+    //     `;
 
-        try {
-            return Function(asyncWrappedCode);
-        } catch (error) {
-            error.sourceCode = asyncWrappedCode;
-            throw error;
-        }
-    }
+    //     try {
+    //         return Function(asyncWrappedCode);
+    //     } catch (error) {
+    //         error.sourceCode = asyncWrappedCode;
+    //         throw error;
+    //     }
+    // }
 
     // Will be added as a string to the context of the renderer, i. e. sandboxedMessageHandler.toString()
-    private sandboxedMessageHandler = (event) => {
-        const message = event.data;
+    // private sandboxedMessageHandler = (event) => {
+    //     const message = event.data;
 
-        switch (message.type) {
-            case "screenshot":
-                //console.log("Sandbox: received screenshot request event: ", evt);
-                const imgDataUrl = screenshotContext.captureScreenshot();
+    //     switch (message.type) {
+    //         case "screenshot":
+    //             //console.log("Sandbox: received screenshot request event: ", evt);
+    //             const imgDataUrl = screenshotContext.captureScreenshot();
 
-                window.postMessage(
-                    {
-                        type: "screenshotCaptured",
-                        captured: { imgDataUrl },
-                        responseId: message.requestId,
-                    },
-                    "app://obsidian.md",
-                );
-                break;
+    //             window.postMessage(
+    //                 {
+    //                     type: "screenshotCaptured",
+    //                     captured: { imgDataUrl },
+    //                     responseId: message.requestId,
+    //                 },
+    //                 "app://obsidian.md",
+    //             );
+    //             break;
 
-            default:
-                break;
-        }
-    };
+    //         default:
+    //             break;
+    //     }
+    // };
 
-    protected sandboxedDependenciesPreamble(): string {
-        // FIXME Too noisy, refactor this to a more readable approach
+    private sandboxedDependenciesScripts(): SandboxedScript[] {
+        return this.dependencies.map(
+            ({ id, url, contents, type }) => ({
+                id,
+                src: url || (contents && blob2url(contents, "text/javascript")),
+                type: type === "module" ? "module" : undefined,
+            }),
+        );
+    }
+
+    private dependenciesPreamble(): string {
         return this.dependencies
-            .map(({ id, type, defaultVar, exportsVars }, idx) =>
-                type !== "module"
-                    ? ""
-                    : `
+            .map(({ id, type, defaultVar, exportsVars }, idx) => {
+                if (type !== "module") return "";
+
+                const src = this.dependenciesScripts[idx].src;
+
+                const defaultVarImport = defaultVar
+                    ? `import ${defaultVar} from '${src}';`
+                    : `// No default export for ${id}`;
+
+                const exportsVarsImport = exportsVars
+                    ? `import { ${exportsVars.join(", ")} } from '${src}';`
+                    : `// No named exports for ${id}`;
+
+                return `
                 // Imports for ${id} dependency
-                ${defaultVar && voca.sprintf("import %s from '%s';", defaultVar, this.sandboxedDependencyScripts[idx].src)}
-                ${exportsVars && voca.sprintf("import { %s } from '%s';", exportsVars.join(", "), this.sandboxedDependencyScripts[idx].src)}
-                `,
-            )
+                ${defaultVarImport}
+                ${exportsVarsImport}
+                `;
+            })
             .join("\n");
     }
 
@@ -184,13 +241,16 @@ export class SandboxedRenderer {
         );
     }
 
+    // FIXME Use a library for this, maybe one with tracing support in order to get the correct line.
+    // Currently, many errors are either not correctly associated with the source code or not displayed at all,
+    // only the DevTools console shows the error message.
     protected async renderError(
         sourceCode: string | null,
         error: Error,
         errorContainer: HTMLElement,
     ) {
         // Ideas:
-        // 1. Provide line numbers for the errors, current line numbers are not valid due to
+        // 1. Provide correct line numbers for the errors, current line numbers are not valid due to
         //   the preamble code added to the code block
         // 2. Provide error markers to show on top of source code, a very basic version of this for starters
         // const errorsContainer = this.errorsContainer(el, "width: 100%; height: 100px; overflow: auto;");

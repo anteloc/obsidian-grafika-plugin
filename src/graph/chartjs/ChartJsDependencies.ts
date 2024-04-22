@@ -5,7 +5,6 @@ export const apiDependencies: () => ApiDependency[] = () => {
         {
             id: "chart.js/auto",
             defaultVar: "Chart",
-            mode: "sandboxed",
             type: "non-module",
             contents: require("./sandboxed/chart.umd.js.src"),
         },

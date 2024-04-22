@@ -5,9 +5,8 @@ export const apiDependencies: () => ApiDependency[] = () => {
         {
             id: "vis-network/standalone",
             defaultVar: "vis",
-            mode: "sandboxed",
             type: "non-module",
-            contents: require("./sandboxed/vis-network.min.js.src"),
+            contents: require("./sandboxed/network/vis-network.min.js.src"),
         },
     ];
 };

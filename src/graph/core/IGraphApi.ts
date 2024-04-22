@@ -10,6 +10,13 @@ export type ApiDependency = {
     url?: string,
 };
 
+export type ApiCodeFragments = {
+    apiName: string,
+    graphContainerHtml: string,
+    screenshotSetupJs: string,
+    graphSourceCodeJs: string,
+}
+
 export interface IGraphApi {
     apiName: string;
     utils: any;

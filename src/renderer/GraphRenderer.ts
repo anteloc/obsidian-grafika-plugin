@@ -1,8 +1,9 @@
 import { GptPlotAnalyzer } from "src/ai/gpt/GptPlotAnalyzer";
 import { AbstractGraphApi } from "src/graph/core/AbstractGraphApi";
-import { SandboxedRenderer } from "./SandboxedRenderer";
+import { SandboxedCodeFragments, SandboxedRenderer } from "./SandboxedRenderer";
 
 import { v4 as uuid } from "uuid";
+import { ApiCodeFragments } from "src/graph/core/IGraphApi";
 
 export class GraphRenderer {
     private sandoxedRenderer: SandboxedRenderer;
@@ -22,20 +23,52 @@ export class GraphRenderer {
             analysisResultsContainer: HTMLElement;
         },
     ) {
+        // const {
+        //     apiName,
+        //     dependencies,
+        //     sandboxedScreenshotSetup,
+        //     graphContainerHtml,
+        // } = this.api;
+
+        /*
+        export type ApiCodeFragments = {
+    apiName: string,
+    graphContainerHtml: string,
+    screenshotSetupJs: string,
+    graphSourceCodeJs: string,
+}
+        */
         const {
             apiName,
-            dependencies,
-            sandboxedScreenshotSetup,
-            graphContainerHtml,
-        } = this.api;
+            screenshotSetupJs: screenshotSetup,
+            graphContainerHtml: graphContainer,
+            graphSourceCodeJs: graphSourceCode,
+        } = this.api.codeFragments(this.sourceCode);
+
+        /*
+export type SandboxedCodeFragments = {
+    apiName: string;
+    dependenciesPreamble?: string;
+    screnshotSetup: string;
+    graphContainer: string;
+    graphSourceCode: string;
+};
+        */
+        const codeFragments: SandboxedCodeFragments = {
+            apiName,
+            screenshotSetup,
+            graphContainer,
+            graphSourceCode,
+        };
 
         this.sandoxedRenderer = new SandboxedRenderer(
-            this.sourceCode,
-            apiName,
-            dependencies(),
-            sandboxedScreenshotSetup,
+            codeFragments,
+            // this.sourceCode,
+            // apiName,
+            this.api.dependencies(),
+            // sandboxedScreenshotSetup,
             this.handleScreenshotCaptured.bind(this),
-            graphContainerHtml(""),
+            // graphContainerHtml(""),
             this.rendererEls.rendererContainer,
         );
     }

@@ -1,0 +1,14 @@
+<style>
+    .vis-timeline-container {
+        width: 700px;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        cursor: default;
+        overflow: visible;
+        background: rgb(251, 250, 246);
+        border: 2px solid black;
+    }
+</style>
+
+<div id="graph-container" class="vis-timeline-container"></div>

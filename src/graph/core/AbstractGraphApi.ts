@@ -1,6 +1,8 @@
-import type { IGraphApi, ApiDependency } from "./IGraphApi";
+import type { IGraphApi, ApiDependency, ApiCodeFragments } from "./IGraphApi";
 import { GraphApiUtils } from "./GraphApiUtils";
 import { GrafikaPluginUtils } from "src/plugin/GrafikaPluginUtils";
+
+const defaultGraphContainer = require("./sandboxed/graphContainer.html.src");
 
 export abstract class AbstractGraphApi {
     private graphUtils: GraphApiUtils;
@@ -19,16 +21,28 @@ export abstract class AbstractGraphApi {
     // but added as a string to the context of the sandboxed renderer, 
     // i. e. sandboxedScreenshotSetup.toString()
     // This is a default implementation, custom screenshot logic should be implemented by subclasses
-    public sandboxedScreenshotSetup(screenshotCtx) {
-        screenshotCtx.captureScreenshot = () => {
-            throw new Error(
-                "Screenshot functionality not implemented by: " + this.apiName,
-            );
-        };
+    // public sandboxedScreenshotSetup(screenshotCtx) {
+    //     screenshotCtx.captureScreenshot = () => {
+    //         throw new Error(
+    //             "Screenshot functionality not implemented by: " + this.apiName,
+    //         );
+    //     };
+    // }
+
+    // FIXME Container's class, maybe get them from child classes? Templates?
+    protected graphContainerHtml(_cls: string): string {
+        return defaultGraphContainer;
     }
 
-    public graphContainerHtml(_cls: string): string {
-        return '<div id="graph-container"></div>';
+    protected abstract screenshotSetupJs(): string;
+
+    public codeFragments(codeBlock: string): ApiCodeFragments {
+        return {
+            apiName: this.apiName,
+            graphContainerHtml: this.graphContainerHtml(this.graphContainerCls),
+            screenshotSetupJs: this.screenshotSetupJs(),
+            graphSourceCodeJs: codeBlock,
+        };
     }
 
     public make(): IGraphApi {

@@ -1,45 +1,120 @@
-<!DOCTYPE html>
-  <html lang="__LANG__">
+<!doctype html>
+<html lang="__LANG__">
     <head>
-      <meta charset="utf-8" />
-      <meta http-equiv="Content-Security-Policy" content="__CSP__" />
-      <style>
-        * {
-          margin: 0;
-          padding: 0;
-        }
-        body {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-            Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
-        #graph-container {
-          position: relative;
-          height: 100vh;
-          overflow: hidden;
-        }
-        .ec-debug-dirty-rect {
-          background-color: rgba(255, 0, 0, 0.2) !important;
-          border: 1px solid red !important;
-          box-sizing: border-box;
-        }
-        .dg.main * {
-          box-sizing: content-box;
-        }
-        .dg.main input {
-          line-height: normal;
-        }
-        .dg.main.a {
-          overflow-x: visible;
-        }
-        .dg.main .c select {
-          color: #000;
-        }
-      </style>
-      <!-- FIXME Is this necessary? -->
-      <style id="graph-styles"></style>
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-Security-Policy" content="__CSP__" />
+        <style>
+            /* 
+            TODO Review these styles, maybe they are not the right ones
+            and should be replaced by graphing API-specific styles
+           */
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+                    "Helvetica Neue", sans-serif;
+            }
+            #graph-container {
+                position: relative;
+                height: 100vh;
+                overflow: hidden;
+            }
+            .ec-debug-dirty-rect {
+                background-color: rgba(255, 0, 0, 0.2) !important;
+                border: 1px solid red !important;
+                box-sizing: border-box;
+            }
+            .dg.main * {
+                box-sizing: content-box;
+            }
+            .dg.main input {
+                line-height: normal;
+            }
+            .dg.main.a {
+                overflow-x: visible;
+            }
+            .dg.main .c select {
+                color: #000;
+            }
+        </style>
+        <!-- FIXME Is this necessary? -->
+        <style id="graph-styles"></style>
     </head>
     <body>
-      __GRAPH_CONTAINER__
-      __SCRIPTS__
+        <!-- DIV or CANVAS, depending on the graphing library's needs -->
+        __GRAPH_CONTAINER__
+
+        <!-- Browserified versions of the graphing libraries and utils, imported as <script src="[blob]"> tags -->
+        __SCRIPTS__
+
+        <script id="graph-renderer" type="module">
+            // Graphing libraries and utils dependencies import'ed or set to vars,
+            // in order to make them available to the graph() function
+            __DEPENDENCIES_PREAMBLE__;
+
+            const apis = top.app.plugins.plugins.grafika.apis;
+
+            const screenshotContext = {
+                captureScreenshot: null,
+            };
+
+            // Sets the screenshotContext.captureScreenshot() function,
+            // it depends on the particular graphing library
+            __SCREENSHOT_SETUP_FUNCTION__;
+
+            // Message handler closure
+            const messageHandler = (event) => {
+                const message = event.data;
+
+                switch (message.type) {
+                    case "screenshot":
+                        //console.log("Sandbox: received screenshot request event: ", evt);
+                        screenshotContext
+                            .captureScreenshot()
+                            .then((imgDataUrl) => {
+                                window.postMessage(
+                                    {
+                                        type: "screenshotCaptured",
+                                        captured: { imgDataUrl },
+                                        responseId: message.requestId,
+                                    },
+                                    "app://obsidian.md",
+                                );
+                            });
+                        break;
+
+                    default:
+                        break;
+                }
+            };
+
+            // Make the graph container available as a const to the graphing code
+            const graphContainer = document.getElementById("graph-container");
+
+            screenshotSetup(screenshotContext);
+
+            async function graph() {
+                const { utils } = apis.__API_NAME__;
+
+                try {
+                    __GRAPH_SOURCE_CODE__;
+                } catch (error) {
+                    window.postMessage(
+                        { type: "codeError", error },
+                        "app://obsidian.md",
+                    );
+                }
+            }
+
+            // TODO Evaluate if window.removeEventListener()'s will be necessary,
+            // or if those will be removed by the iframe being destroyed
+            window.addEventListener("load", () => {
+                window.addEventListener("message", messageHandler, false);
+                graph();
+            });
+        </script>
     </body>
-  </html>
+</html>

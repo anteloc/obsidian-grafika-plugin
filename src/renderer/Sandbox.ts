@@ -10,6 +10,24 @@ export type SandboxedScript = {
     content?: string;
 };
 
+// __API_NAME__ // -> API's apiName
+// __GRAPH_CONTAINER__ // -> API's graphContainerHtml
+// __SCRIPTS__ // Generated from dependencies
+// __DEPENDENCIES_PREAMBLE__ // Generated from dependencies
+// __SCREENSHOT_SETUP_FUNCTION__  // API's -> screenshotSetupJs
+// __GRAPH_SOURCE_CODE__ // -> API's argument to get the rest of the code fragments
+
+export type SandboxPlaceholderValues = {
+    __LANG__?: string; // Reserved for internal use
+    __CSP__?: string; // Reserved for internal use
+    __API_NAME__: string;
+    __GRAPH_CONTAINER__: string;
+    __SCRIPTS__?: string; // Reserved for internal use
+    __DEPENDENCIES_PREAMBLE__: string;
+    __SCREENSHOT_SETUP_FUNCTION__: string;
+    __GRAPH_SOURCE_CODE__: string;
+};
+
 export class Sandbox {
     static readonly SANDBOX_ALLOW = [
         "allow-pointer-lock",
@@ -41,6 +59,7 @@ export class Sandbox {
         "worker-src": [`'none'`],
     };
 
+    // TODO Review if this should be modified, hardcoded or passed as a parameter
     static readonly SANDBOX_STYLE =
         "width:700px;height:700px;border:2px solid black;background:none";
 
@@ -51,7 +70,8 @@ export class Sandbox {
 
     constructor(
         public sandboxContainer: HTMLElement,
-        private graphContainerHtml: string,
+        // private graphContainerHtml: string,
+        private placeholderValues: SandboxPlaceholderValues,
         private scripts: SandboxedScript[],
         private isShared: boolean,
         private onerror: (e: string) => void,
@@ -75,31 +95,55 @@ export class Sandbox {
     }
 
     public async start() {
-        const lang = document.documentElement.lang || "en";
-        const allowStr = this.allow.join(" ");
-        const cspStr =
-            this.csp &&
-            Object.entries(this.csp)
-                .map(([k, v]) => `${k} ${v.join(" ")}`)
-                .join("; ");
+        this.placeholderValues.__LANG__ = document.documentElement.lang || "en";
+        this.placeholderValues.__CSP__ = "";
 
-        const scriptsStr = this.scripts
+        if (this.csp) {
+            for (const [k, v] of Object.entries(this.csp)) {
+                this.placeholderValues.__CSP__ += `${k} ${v.join(" ")}; `;
+            }
+        }
+
+        this.placeholderValues.__SCRIPTS__ = this.scripts
             .map((s) => this.scriptTag(s))
             .join("\n");
 
+        const sandbox = this.setupSandbox(this.allow.join(" "));
+
+        this.sandboxContainer.appendChild(sandbox);
+
+        this.sandboxed = sandbox;
+    }
+
+    private setupSandbox(allowStr: string): HTMLIFrameElement {
         const sandbox = document.createElement("iframe");
 
         sandbox.style.cssText = Sandbox.SANDBOX_STYLE;
 
         sandbox.setAttribute("id", this.sandboxId);
         sandbox.setAttribute("sandbox", allowStr);
-        cspStr && sandbox.setAttribute("csp", cspStr);
+        sandbox.setAttribute("csp", this.placeholderValues.__CSP__);
+        // sandbox.setAttribute("csp", cspStr);
 
-        sandbox.srcdoc = SRCDOC_TEMPLATE.replace("__LANG__", lang)
-            .replace("__CSP__", cspStr || "")
-            .replace("__GRAPH_CONTAINER__", this.graphContainerHtml)
-            .replace("__SCRIPTS__", scriptsStr);
+        sandbox.srcdoc = this.fillTemplate();
+        this.addSandboxEventListeners(sandbox);
 
+        return sandbox;
+    }
+
+    private fillTemplate(): string {
+        let srcdoc = SRCDOC_TEMPLATE;
+
+        for (const [placeholder, value] of Object.entries(
+            this.placeholderValues,
+        )) {
+            srcdoc = srcdoc.replace(placeholder, value);
+        }
+
+        return srcdoc;
+    }
+
+    private addSandboxEventListeners(sandbox: HTMLIFrameElement) {
         sandbox.addEventListener("load", (_evt: Event) => {
             // console.log("sandbox loaded, evt:", _evt);
 
@@ -123,10 +167,6 @@ export class Sandbox {
         sandbox.addEventListener("error", (event: Event) =>
             this.onerror(event.toString()),
         );
-
-        this.sandboxContainer.appendChild(sandbox);
-
-        this.sandboxed = sandbox;
     }
 
     private addContentWindowEventListeners() {
@@ -172,7 +212,10 @@ export class Sandbox {
                 this.handleCodeError(message.error);
                 break;
             case "screenshotCaptured":
-                this.handleScreenshotCaptured(message.captured, message.responseId);
+                this.handleScreenshotCaptured(
+                    message.captured,
+                    message.responseId,
+                );
                 break;
             case "error":
             case "unhandledRejection":

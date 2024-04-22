@@ -1,0 +1,9 @@
+// Find the canvas element where the new graph will be drawn
+function screenshotSetup(screenshotCtx) {
+    screenshotCtx.captureScreenshot = async () =>
+        document
+            .querySelector(
+                "div#graph-container.vis-network-container div.vis-network canvas",
+            )
+            .toDataURL("image/png");
+}

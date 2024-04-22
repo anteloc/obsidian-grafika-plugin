@@ -43,7 +43,7 @@ const toSandbox = (sandboxDir, froms) =>
     }));
 
 const banner = `/*
-Building Grafika Obsidian Plugin...
+ Grafika Obsidian Plugin Build
 */
 `;
 
@@ -55,6 +55,7 @@ const commonDeps = toSandbox("./src/graph/core/sandboxed", [
     "./node_modules/underscore/underscore-umd-min.js",
     "./node_modules/uuid/dist/umd/uuidv4.min.js",
     "./node_modules/moment/min/moment.min.js",
+    "./node_modules/html2canvas/dist/html2canvas.min.js",
 ]);
 
 const echartsDeps = toSandbox("./src/graph/echarts/sandboxed", [
@@ -66,14 +67,27 @@ const chartJsDeps = toSandbox("./src/graph/chartjs/sandboxed", [
     "./node_modules/chart.js/dist/chart.umd.js",
 ]);
 
-const visJsDeps = toSandbox("./src/graph/visjs/sandboxed", [
+const visNetworkDeps = toSandbox("./src/graph/visjs/sandboxed/network", [
     "./node_modules/vis-network/standalone/umd/vis-network.min.js",
-    "./node_modules/vis-timeline/standalone/umd/vis-timeline-graph2d.min.js",
-    "./node_modules/vis-data/standalone/umd/vis-data.min.js",
-    "./node_modules/timeline-arrows/arrow.js"
 ]);
 
-const filesToSrc = [].concat(commonDeps, echartsDeps, chartJsDeps, visJsDeps);
+const visTimelineDeps = toSandbox("./src/graph/visjs/sandboxed/timeline", [
+    "./node_modules/vis-timeline/standalone/umd/vis-timeline-graph2d.min.js",
+    "./node_modules/timeline-arrows/arrow.js",
+]);
+
+const visDataDeps = toSandbox("./src/graph/visjs/sandboxed", [
+    "./node_modules/vis-data/standalone/umd/vis-data.min.js",
+]);
+
+const filesToSrc = [
+    ...commonDeps,
+    ...echartsDeps,
+    ...chartJsDeps,
+    ...visNetworkDeps,
+    ...visTimelineDeps,
+    ...visDataDeps,
+];
 
 const context = await esbuild.context({
     banner: {

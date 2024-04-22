@@ -5,16 +5,14 @@ export const apiDependencies: () => ApiDependency[] = () => {
         {
             id: "timeline-arrows",
             defaultVar: "Arrow",
-            mode: "sandboxed",
             type: "module",
-            contents: require("./sandboxed/arrow.js.src"),
+            contents: require("./sandboxed/timeline/arrow.js.src"),
         },
         {
             id: "vis-timeline/standalone",
             defaultVar: "vis",
-            mode: "sandboxed",
             type: "non-module",
-            contents: require("./sandboxed/vis-timeline-graph2d.min.js.src"),
+            contents: require("./sandboxed/timeline/vis-timeline-graph2d.min.js.src"),
         },
     ];
 };

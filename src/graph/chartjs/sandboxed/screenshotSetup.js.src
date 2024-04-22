@@ -1,0 +1,5 @@
+// Patch the echarts.init function to make a screenshot closure available
+// to the screenshot context
+function screenshotSetup(screenshotCtx) {
+    screenshotCtx.captureScreenshot = async () => document.getElementById('graph-container').toDataURL("image/png");
+}

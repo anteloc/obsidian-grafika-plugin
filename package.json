@@ -41,6 +41,7 @@
 		"echarts-gl": "^2.0.9",
 		"eslint": "^8.57.0",
 		"htl": "^0.3.1",
+		"html2canvas": "^1.4.1",
 		"openai": "^4.37.1",
 		"parse-markdown-table": "^0.0.6",
 		"require-text": "^0.0.1",
