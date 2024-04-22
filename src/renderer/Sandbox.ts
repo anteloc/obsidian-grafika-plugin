@@ -66,7 +66,6 @@ export class Sandbox {
         private placeholderValues: SandboxPlaceholderValues,
         private scripts: SandboxedScript[],
         private isShared: boolean,
-        private onerror: (e: string) => void,
         private handleCodeError: (codeError: Error) => void,
         private handleScreenshotCaptured: (
             captured: { imgDataUrl: URL },
@@ -110,14 +109,20 @@ export class Sandbox {
     private setupSandbox(allowStr: string): HTMLIFrameElement {
         const sandbox = document.createElement("iframe");
 
+        // sandbox.addEventListener("error", (event: Event) => {
+        //     console.error("sandbox onerror:", event);
+        //     this.onerror(event.toString());
+        // });
+
         sandbox.style.cssText = Sandbox.SANDBOX_STYLE;
 
         sandbox.setAttribute("id", this.sandboxId);
         sandbox.setAttribute("sandbox", allowStr);
         sandbox.setAttribute("csp", this.placeholderValues.__CSP__);
 
-        sandbox.srcdoc = this.fillTemplate();
         this.addSandboxEventListeners(sandbox);
+
+        sandbox.srcdoc = this.fillTemplate();
 
         return sandbox;
     }
@@ -128,7 +133,8 @@ export class Sandbox {
         for (const [placeholder, value] of Object.entries(
             this.placeholderValues,
         )) {
-            srcdoc = srcdoc.replace(placeholder, value);
+            const regex = new RegExp(placeholder, "g");
+            srcdoc = srcdoc.replace(regex, value);
         }
 
         return srcdoc;
@@ -136,8 +142,7 @@ export class Sandbox {
 
     private addSandboxEventListeners(sandbox: HTMLIFrameElement) {
         sandbox.addEventListener("load", (_evt: Event) => {
-            // console.log("sandbox loaded, evt:", _evt);
-
+            // Wait until the iframe is loaded to add event listeners to its contentWindow
             this.addContentWindowEventListeners();
 
             // FIXME - Legacy fixme from the original source
@@ -154,13 +159,12 @@ export class Sandbox {
             }
             sandbox.__loaded__ = true;
         });
-
-        sandbox.addEventListener("error", (event: Event) =>
-            this.onerror(event.toString()),
-        );
     }
 
     private addContentWindowEventListeners() {
+        // Errors will be caught by a window.onerror located in the sandboxed iframe content,
+        // <script defer id="syntax-checker">...</script>
+        // in order to also catch syntax errors
         const messageListener = this.handleMessage.bind(this);
 
         this.sandboxed.contentWindow?.addEventListener(
@@ -194,18 +198,17 @@ export class Sandbox {
 
         switch (message.type) {
             case "codeError":
-                message.error.sourceCode = this.srcdoc;
-                this.handleCodeError(message.error);
+                console.error("Error on sandboxed script",
+                    message.codeError,
+                );
+                message.codeError.sourceCode = this.srcdoc;
+                this.handleCodeError(message.codeError);
                 break;
             case "screenshotCaptured":
                 this.handleScreenshotCaptured(
                     message.captured,
                     message.responseId,
                 );
-                break;
-            case "error":
-            case "unhandledRejection":
-                this.onerror(event.toString());
                 break;
             default:
                 break;

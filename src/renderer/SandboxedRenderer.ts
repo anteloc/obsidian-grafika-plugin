@@ -57,10 +57,6 @@ export class SandboxedRenderer {
             placeholderValues,
             this.dependenciesScripts,
             true,
-            // TODO Not very useful for now, determine the error cases where this could be useful
-            (e: string) => {
-                console.log("Error on sandboxed iframe:", e);
-            },
             this.handleCodeError.bind(this),
             this.handleScreenshotCaptured.bind(this),
         );

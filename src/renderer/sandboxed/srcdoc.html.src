@@ -50,7 +50,19 @@
         <!-- Browserified versions of the graphing libraries and utils, imported as <script src="[blob]"> tags -->
         __SCRIPTS__
 
-        <script id="graph-renderer" type="module">
+        <script defer id="syntax-checker">
+            // A (very ugly!) workaround to catch syntax errors in the graphing code
+            // FIXME It will also catch syntax errors in other code, not only the graphing one
+            window.onerror = function (message, file, line, column, errorObj) {
+                errorObj.stack += `\nat ${file}:${line}:${column}`
+                window.postMessage(
+                    { type: "codeError", codeError: errorObj },
+                    "app://obsidian.md",
+                );
+            };
+        </script>
+
+        <script defer id="graph-renderer" type="module">
             // Graphing libraries and utils dependencies import'ed or set to vars,
             // in order to make them available to the graph() function
             __DEPENDENCIES_PREAMBLE__;
@@ -102,8 +114,9 @@
                 try {
                     __GRAPH_SOURCE_CODE__;
                 } catch (error) {
+                    console.error("Error during graphing code execution: ", error);
                     window.postMessage(
-                        { type: "codeError", error },
+                        { type: "codeError", codeError: error },
                         "app://obsidian.md",
                     );
                 }
