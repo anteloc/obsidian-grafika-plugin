@@ -2,7 +2,9 @@
 // TODO Implement the creenshotCtx.captureScreenshot() closure!
 function screenshotSetup(screenshotCtx) {
     screenshotCtx.captureScreenshot = async () => {
-        const canvas = await html2canvas(document.querySelector("#graph-container"));
+        // Capture the full timeline container, not only the graph one, in order to
+        // include extra text and information that will give context to the AI analysis
+        const canvas = await html2canvas(document.querySelector("#timeline-container"));
         return canvas.toDataURL('image/png');
     };
 }

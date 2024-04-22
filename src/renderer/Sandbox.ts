@@ -10,13 +10,6 @@ export type SandboxedScript = {
     content?: string;
 };
 
-// __API_NAME__ // -> API's apiName
-// __GRAPH_CONTAINER__ // -> API's graphContainerHtml
-// __SCRIPTS__ // Generated from dependencies
-// __DEPENDENCIES_PREAMBLE__ // Generated from dependencies
-// __SCREENSHOT_SETUP_FUNCTION__  // API's -> screenshotSetupJs
-// __GRAPH_SOURCE_CODE__ // -> API's argument to get the rest of the code fragments
-
 export type SandboxPlaceholderValues = {
     __LANG__?: string; // Reserved for internal use
     __CSP__?: string; // Reserved for internal use
@@ -70,7 +63,6 @@ export class Sandbox {
 
     constructor(
         public sandboxContainer: HTMLElement,
-        // private graphContainerHtml: string,
         private placeholderValues: SandboxPlaceholderValues,
         private scripts: SandboxedScript[],
         private isShared: boolean,
@@ -123,7 +115,6 @@ export class Sandbox {
         sandbox.setAttribute("id", this.sandboxId);
         sandbox.setAttribute("sandbox", allowStr);
         sandbox.setAttribute("csp", this.placeholderValues.__CSP__);
-        // sandbox.setAttribute("csp", cspStr);
 
         sandbox.srcdoc = this.fillTemplate();
         this.addSandboxEventListeners(sandbox);
@@ -193,11 +184,6 @@ export class Sandbox {
         );
     }
 
-    // TODO Unused for now,
-    // - sends messages to the contentWindow of the sandboxed iframe
-    // - determine the actions and objects to be sent in case some interaction
-    // with the iframe is required
-    // FIXME Add proper types according to window.postMessage() signature
     public sendMessage(type: string, message: object) {
         // console.log("Sending message to sandboxed iframe contentWindow:", this.sandboxed.contentWindow, evt, message);
         this.sandboxed.contentWindow?.postMessage({ type, ...message }, "*");

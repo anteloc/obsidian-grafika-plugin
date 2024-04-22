@@ -74,6 +74,7 @@ const visNetworkDeps = toSandbox("./src/graph/visjs/sandboxed/network", [
 const visTimelineDeps = toSandbox("./src/graph/visjs/sandboxed/timeline", [
     "./node_modules/vis-timeline/standalone/umd/vis-timeline-graph2d.min.js",
     "./node_modules/timeline-arrows/arrow.js",
+    "./node_modules/vis-timeline/dist/vis-timeline-graph2d.css",
 ]);
 
 const visDataDeps = toSandbox("./src/graph/visjs/sandboxed", [

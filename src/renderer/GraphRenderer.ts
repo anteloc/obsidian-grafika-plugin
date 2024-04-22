@@ -23,21 +23,6 @@ export class GraphRenderer {
             analysisResultsContainer: HTMLElement;
         },
     ) {
-        // const {
-        //     apiName,
-        //     dependencies,
-        //     sandboxedScreenshotSetup,
-        //     graphContainerHtml,
-        // } = this.api;
-
-        /*
-        export type ApiCodeFragments = {
-    apiName: string,
-    graphContainerHtml: string,
-    screenshotSetupJs: string,
-    graphSourceCodeJs: string,
-}
-        */
         const {
             apiName,
             screenshotSetupJs: screenshotSetup,
@@ -45,15 +30,6 @@ export class GraphRenderer {
             graphSourceCodeJs: graphSourceCode,
         } = this.api.codeFragments(this.sourceCode);
 
-        /*
-export type SandboxedCodeFragments = {
-    apiName: string;
-    dependenciesPreamble?: string;
-    screnshotSetup: string;
-    graphContainer: string;
-    graphSourceCode: string;
-};
-        */
         const codeFragments: SandboxedCodeFragments = {
             apiName,
             screenshotSetup,
@@ -63,12 +39,8 @@ export type SandboxedCodeFragments = {
 
         this.sandoxedRenderer = new SandboxedRenderer(
             codeFragments,
-            // this.sourceCode,
-            // apiName,
             this.api.dependencies(),
-            // sandboxedScreenshotSetup,
             this.handleScreenshotCaptured.bind(this),
-            // graphContainerHtml(""),
             this.rendererEls.rendererContainer,
         );
     }

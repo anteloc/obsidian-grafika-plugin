@@ -9,6 +9,11 @@
         background: rgb(251, 250, 246);
         border: 2px solid black;
     }
+
+    __VIS_TIMELINE_CSS__
 </style>
 
-<div id="graph-container" class="vis-timeline-container"></div>
+<div id="timeline-container">
+    <h3>Timeline</h3>
+    <div id="graph-container" class="vis-timeline-container"></div>
+</div>

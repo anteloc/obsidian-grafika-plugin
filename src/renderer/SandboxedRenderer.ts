@@ -4,12 +4,6 @@ import { ApiDependency } from "../graph/core/IGraphApi";
 
 import voca from "voca";
 
-// __API_NAME__ // -> API's apiName
-// __GRAPH_CONTAINER__ // -> API's graphContainerHtml
-        // __DEPENDENCIES_PREAMBLE__ // Generated from dependencies
-        // __SCREENSHOT_SETUP_FUNCTION__  // API's -> screenshotSetupJs
-        // __GRAPH_SOURCE_CODE__ // -> API's argument to get the rest of the code fragments
-
 export type SandboxedCodeFragments = {
     apiName: string;
     dependenciesPreamble?: string;
@@ -44,69 +38,6 @@ export class SandboxedRenderer {
     }
 
     public async renderGraph() {
-        // This is here in order to allow the Function() constructor to perform
-        // several source code validations, like syntax errors, etc.
-        // let graphFunction;
-
-        // try {
-        //     graphFunction = this.sandboxedGraphFunction()();
-        // } catch (error) {
-        //     await this.renderError(
-        //         error.sourceCode,
-        //         error,
-        //         this.rendererContainer,
-        //     );
-        //     return;
-        // }
-
-        // Dependencies will be added as <script> tags to the sandbox iframe,
-        // which means the order of this array determines the order of the imports
-        // const sandboxedScript = `
-        //     ${this.sandboxedDependenciesPreamble()} // OK
-        //     // Screenshot setup function
-        //     function ${this.sandboxedScreenshotSetup.toString()}
-
-        //     const screenshotContext = {
-        //         captureScreenshot: null,
-        //     };
-
-        //     sandboxedScreenshotSetup(screenshotContext);
-
-        //     // Message handler closure
-        //     let messageHandler = ${this.sandboxedMessageHandler.toString()} // Not needed in template
-
-        //     // FIXME Will a window.removeEventListener() be necessary?
-        //     // Check: If/when a sandboxed iframe is disposed, will this event listener be automatically removed?
-            
-        //     const graphContainer = document.getElementById('graph-container');
-        //     const graphFunction = ${graphFunction.toString()};
-
-        //     window.addEventListener("load", () => {
-        //         window.addEventListener("message", messageHandler, false);
-        //         graphFunction();
-        //     });
-        // `;
-
-        // const scripts = [
-        //     ...this.dependenciesScripts,
-        //     // { id: "codeblock", type: "module", content: sandboxedScript },
-        // ];
-
-        // Placeholders to replace in the sandboxed srcdoc.html.src template:
-        // __GRAPH_CONTAINER__ // -> API's graphContainerHtml
-        // __SCRIPTS__ // Generated from dependencies
-        // __DEPENDENCIES_PREAMBLE__ // Generated from dependencies
-        // __SCREENSHOT_SETUP_FUNCTION__  // API's -> screenshotSetupJs
-        // __GRAPH_SOURCE_CODE__ // -> API's argument to get the rest of the code fragments
-        // __API_NAME__ // -> API's apiName
-
-        /*
-        apiName: string;
-    dependenciesPreamble?: string;
-    screnshotSetup: string;
-    graphContainer: string;
-    graphSourceCode: string;
-        */
         const {apiName: __API_NAME__, 
             graphContainer: __GRAPH_CONTAINER__, 
             dependenciesPreamble: __DEPENDENCIES_PREAMBLE__, 
@@ -123,69 +54,19 @@ export class SandboxedRenderer {
 
         this.sandbox = new Sandbox(
             this.rendererContainer,
-            // this.graphContainerHtml,
             placeholderValues,
             this.dependenciesScripts,
-            // scripts,
             true,
             // TODO Not very useful for now, determine the error cases where this could be useful
             (e: string) => {
                 console.log("Error on sandboxed iframe:", e);
             },
-            // onCodeError
             this.handleCodeError.bind(this),
-            // onScreenshotCaptured
             this.handleScreenshotCaptured.bind(this),
         );
 
         await this.sandbox.start();
     }
-
-    // The returned value will be added as a string to the context of the renderer, i. e. sandboxedMessageHandler.toString()
-    // protected sandboxedGraphFunction(): Function {
-    //     const asyncWrappedCode = `
-    //         return (async function () { 
-    //             const { utils } = top.app.plugins.plugins.grafika.apis.${this.apiName};
-
-    //             try {
-    //                 ${this.sourceCode} 
-    //             } catch(error) {
-    //                 window.postMessage({type: 'codeError', error}, 'app://obsidian.md');
-    //             }
-    //         });
-    //     `;
-
-    //     try {
-    //         return Function(asyncWrappedCode);
-    //     } catch (error) {
-    //         error.sourceCode = asyncWrappedCode;
-    //         throw error;
-    //     }
-    // }
-
-    // Will be added as a string to the context of the renderer, i. e. sandboxedMessageHandler.toString()
-    // private sandboxedMessageHandler = (event) => {
-    //     const message = event.data;
-
-    //     switch (message.type) {
-    //         case "screenshot":
-    //             //console.log("Sandbox: received screenshot request event: ", evt);
-    //             const imgDataUrl = screenshotContext.captureScreenshot();
-
-    //             window.postMessage(
-    //                 {
-    //                     type: "screenshotCaptured",
-    //                     captured: { imgDataUrl },
-    //                     responseId: message.requestId,
-    //                 },
-    //                 "app://obsidian.md",
-    //             );
-    //             break;
-
-    //         default:
-    //             break;
-    //     }
-    // };
 
     private sandboxedDependenciesScripts(): SandboxedScript[] {
         return this.dependencies.map(
