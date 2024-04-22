@@ -118,6 +118,7 @@ export class Sandbox {
 
         sandbox.setAttribute("id", this.sandboxId);
         sandbox.setAttribute("sandbox", allowStr);
+        // @ts-ignore
         sandbox.setAttribute("csp", this.placeholderValues.__CSP__);
 
         this.addSandboxEventListeners(sandbox);
@@ -150,14 +151,14 @@ export class Sandbox {
             // This is a tricky way
             // `onload` will be triggered again after the iframe redirects
             // here we check and block it as we usually won't do this
-            if (sandbox.__loaded__ && this.isShared) {
-                // const errorMsg =
-                //     "potential redirection from the code was blocked";
-                // console.error(errorMsg);
-                // this.onerror(errorMsg);
-                return;
-            }
-            sandbox.__loaded__ = true;
+            // if (sandbox.__loaded__ && this.isShared) {
+            //     // const errorMsg =
+            //     //     "potential redirection from the code was blocked";
+            //     // console.error(errorMsg);
+            //     // this.onerror(errorMsg);
+            //     return;
+            // }
+            // sandbox.__loaded__ = true;
         });
     }
 

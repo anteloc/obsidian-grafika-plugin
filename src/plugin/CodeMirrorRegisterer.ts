@@ -37,8 +37,8 @@ export class CodemirrorRegisterer implements PluginValue {
 
     private registerLanguage(language: string, modeName: string, mime: string) {
         // Set globally by Obsidian
-        CodeMirror.defineMode(language, (_n, _m) =>
-            CodeMirror.getMode(modeName, mime),
+        // @ts-ignore
+        CodeMirror.defineMode(language, (_n, _m) => CodeMirror.getMode({mode: modeName}, mime),
         );
     }
 

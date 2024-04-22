@@ -12,7 +12,7 @@ export class GraphRenderer {
         private sourceCode: string,
         private api: AbstractGraphApi,
         private analyzer: GptPlotAnalyzer,
-        private alertNotice: (message: string, duration: number) => void,
+        private alertNotice: (message: string, duration: number) => any,
         private markdownRenderer: (
             markdown: string,
             markdownContainer: HTMLElement,
@@ -54,7 +54,7 @@ export class GraphRenderer {
     }
 
     private handleScreenshotCaptured(
-        captured: { dataUrl: URL },
+        captured: { imgDataUrl: URL },
         responseId: string,
     ) {
         if (responseId.startsWith("analyze-")) {

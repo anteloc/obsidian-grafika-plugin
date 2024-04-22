@@ -1,4 +1,4 @@
-Copyright (c)2024, Carlos Antelo
+Copyright (c) 2024, Carlos Antelo
 All rights reserved.
 
 This file is part of the Grafika Obsidian Plugin (the "Software"), and is released under the 

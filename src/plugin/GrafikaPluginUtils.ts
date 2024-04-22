@@ -86,7 +86,7 @@ export class GrafikaPluginUtils {
     // TODO Simplify this code, it's too noisy
     private findFileTablePairsImpl(
         tableTag: string,
-    ): { file: TFile; table: SectionCache }[] | undefined {
+    ): { file: TFile; table: SectionCache }[] {
         const fileCache = (file: TFile) =>
             this.metadataCache.getFileCache(file);
 
@@ -123,8 +123,9 @@ export class GrafikaPluginUtils {
                 ),
             }))
             .filter((ft) => ft.table);
-
-        return fileTablePairs || null;
+            
+        // @ts-ignore
+        return fileTablePairs || [];
     }
 
     private async fileContentsImpl(

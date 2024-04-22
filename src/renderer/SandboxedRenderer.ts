@@ -23,7 +23,7 @@ export class SandboxedRenderer {
         private dependencies: ApiDependency[],
         // private sandboxedScreenshotSetup: (screenshotCtx) => void,
         private screenshotHandler: (
-            captured: { dataUrl: URL },
+            captured: { imgDataUrl: URL },
             responseId: string,
         ) => void,
         // private graphContainerHtml: string,
@@ -38,16 +38,18 @@ export class SandboxedRenderer {
     }
 
     public async renderGraph() {
-        const {apiName: __API_NAME__, 
-            graphContainer: __GRAPH_CONTAINER__, 
-            dependenciesPreamble: __DEPENDENCIES_PREAMBLE__, 
-            screenshotSetup: __SCREENSHOT_SETUP_FUNCTION__, 
-            graphSourceCode: __GRAPH_SOURCE_CODE__} = this.codeFragments;
+        const {
+            apiName: __API_NAME__,
+            graphContainer: __GRAPH_CONTAINER__,
+            dependenciesPreamble,
+            screenshotSetup: __SCREENSHOT_SETUP_FUNCTION__,
+            graphSourceCode: __GRAPH_SOURCE_CODE__,
+        } = this.codeFragments;
 
         const placeholderValues: SandboxPlaceholderValues = {
             __API_NAME__,
             __GRAPH_CONTAINER__,
-            __DEPENDENCIES_PREAMBLE__,
+            __DEPENDENCIES_PREAMBLE__: dependenciesPreamble || "",
             __SCREENSHOT_SETUP_FUNCTION__,
             __GRAPH_SOURCE_CODE__,
         };
@@ -65,13 +67,11 @@ export class SandboxedRenderer {
     }
 
     private sandboxedDependenciesScripts(): SandboxedScript[] {
-        return this.dependencies.map(
-            ({ id, url, contents, type }) => ({
-                id,
-                src: url || (contents && blob2url(contents, "text/javascript")),
-                type: type === "module" ? "module" : undefined,
-            }),
-        );
+        return this.dependencies.map(({ id, url, contents, type }) => ({
+            id,
+            src: url || (contents && blob2url(contents, "text/javascript")),
+            type: type === "module" ? "module" : undefined,
+        }));
     }
 
     private dependenciesPreamble(): string {
@@ -99,7 +99,7 @@ export class SandboxedRenderer {
     }
 
     protected handleScreenshotCaptured(
-        captured: { dataUrl: URL },
+        captured: { imgDataUrl: URL },
         responseId: string,
     ) {
         this.screenshotHandler(captured, responseId);
@@ -112,6 +112,7 @@ export class SandboxedRenderer {
         );
 
         this.renderError(
+            // @ts-ignore
             codeError.sourceCode,
             codeError,
             this.rendererContainer,

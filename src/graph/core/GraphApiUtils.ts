@@ -40,7 +40,7 @@ export class GraphApiUtils {
     private async tableDataImpl(
         tableTag: string,
         autoType?: boolean,
-    ): Promise<Record<string, unknown>[] | undefined> {
+    ): Promise<Array<object | string> | undefined> {
         // tableTag should be *unique* for a table in the whole vault;
         // if not, the first tagget table found is returned
 
@@ -101,27 +101,19 @@ export class GraphApiUtils {
     //   not strictly required after removing Observable Plot
     private fileDataImpl(filePath: string): FileDataParsers | null {
         const fileContents = async () =>
-            await this.pluginUtils.fileContents(filePath);
+            (await this.pluginUtils.fileContents(filePath)) || "";
 
-        const d3Csv = async (autoType?: boolean) =>
-            d3.csvParse(
-                await fileContents(),
-                autoType ? d3.autoType : undefined,
-            );
+        const withParser = (parser: Function) => async (autoType?: boolean) =>
+            autoType
+                ? parser(await fileContents(), d3.autoType)
+                : parser(await fileContents());
 
-        const d3Tsv = async (autoType?: boolean) =>
-            d3.csvParse(
-                await fileContents(),
-                autoType ? d3.autoType : undefined,
-            );
+        const d3Csv = withParser(d3.csvParse);
+
+        const d3Tsv = withParser(d3.tsvParse);
 
         const d3Dsv = async (delim: string, autoType?: boolean) =>
-            d3
-                .dsvFormat(delim)
-                .parse(
-                    await fileContents(),
-                    autoType ? d3.autoType : undefined,
-                );
+            await withParser(d3.dsvFormat(delim).parse)(autoType);
 
         const d3Json = async (autoType?: boolean) => {
             let parsed = JSON.parse((await fileContents()) || "[]");
@@ -129,9 +121,7 @@ export class GraphApiUtils {
             // Apply autoType only to arrays
             // FIXME Create a function for autotyping collections? Maybe import autotype from d3?
             if (_.isArray(parsed)) {
-                parsed = parsed.map((d: Record<string, unknown>) =>
-                    autoType ? d3.autoType(d) : d,
-                );
+                parsed = parsed.map((d) => (autoType ? d3.autoType(d) : d));
             }
 
             return parsed;

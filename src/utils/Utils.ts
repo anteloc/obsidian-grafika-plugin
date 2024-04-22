@@ -14,6 +14,8 @@ export async function pngImgData(imgData: URL): Promise<URL> {
             canvas.width = img.width;
             canvas.height = img.height;
 
+            if(!ctx) return;
+            
             ctx.drawImage(img, 0, 0);
             
             const pngUrl = canvas.toDataURL("image/png");
@@ -23,7 +25,7 @@ export async function pngImgData(imgData: URL): Promise<URL> {
             resolve(new URL(pngUrl));
         };
 
-        img.src = imgData;
+        img.src = imgData.toString();
     });
 }
 

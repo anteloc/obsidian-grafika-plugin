@@ -1,1 +1,14 @@
+<style>
+    .chartjs-container {
+        width: 700px;
+        height: 700px;
+        margin: 0;
+        padding: 0;
+        cursor: default;
+        overflow: visible;
+        background: rgb(251, 250, 246);
+        border: 2px solid black;
+    }
+</style>
+
 <canvas id="graph-container"></canvas>
