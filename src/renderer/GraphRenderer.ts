@@ -3,7 +3,8 @@ import { AbstractGraphApi } from "src/graph/core/AbstractGraphApi";
 import { SandboxedCodeFragments, SandboxedRenderer } from "./SandboxedRenderer";
 
 import { v4 as uuid } from "uuid";
-import { ApiCodeFragments } from "src/graph/core/IGraphApi";
+import moment from "moment";
+import voca from "voca";
 
 export class GraphRenderer {
     private sandoxedRenderer: SandboxedRenderer;
@@ -65,33 +66,64 @@ export class GraphRenderer {
     protected async analyzePlot(captured: { imgDataUrl: URL }) {
         const analyzingNotice = this.alertNotice("Analyzing plot...", 0);
 
+        let cType = "ai-analysis";
+        let cHeader = "AI";
+        const cInfoTempl = "**Date:** %s, **Took:** %d secs";
+
+        const start = moment();
+        let result;
+
         try {
-            let result = await this.analyzer.analyze(captured.imgDataUrl);
-
-            result = result || "**ERROR** Failed to analyze the plot image.";
-
-            await this.markdownRenderer(
-                this.makeCallout("ai-analysis", "AI", result),
-                this.rendererEls.analysisResultsContainer,
-            );
+            result =
+                (await this.analyzer.analyze(captured.imgDataUrl)) ||
+                "**ERROR** Failed to analyze the plot image";
         } catch (error) {
             console.error("analyzePlot: GPT Error:", error);
 
+            cType = "error";
+            cHeader = "AI Error";
+            result = error.message;
+        } finally {
+            const end = moment();
+
+            let elapsed = moment.duration(end.diff(start)).asSeconds();
+            elapsed = Math.round(elapsed * 10) / 10;
+
+            const cInfo = voca.sprintf(
+                cInfoTempl,
+                end.format("MMMM Do YYYY, h:mm:ss a"),
+                elapsed,
+            );
+
             await this.markdownRenderer(
-                this.makeCallout("error", "AI Error", error.message),
+                this.makeCallout(
+                    cType,
+                    cHeader,
+                    cInfo,
+                    result,
+                    captured.imgDataUrl,
+                ),
                 this.rendererEls.analysisResultsContainer,
             );
-        } finally {
+
             analyzingNotice.hide();
         }
     }
 
-    private makeCallout(type: string, header: string, text: string) {
+    private makeCallout(
+        type: string,
+        header: string,
+        info: string,
+        text: string,
+        imgDataUrl?: URL,
+    ) {
         const lines = [];
 
         const textLines = text.split("\n").map((line) => `> ${line}`);
 
         lines.push(`> [!${type}]+ ${header}`);
+        lines.push(`> ${info}`);
+        lines.push(`> ![Image|250](${imgDataUrl})`);
         lines.push(...textLines);
 
         return lines.join("\n");
