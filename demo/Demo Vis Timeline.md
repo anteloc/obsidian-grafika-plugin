@@ -1,8 +1,7 @@
-# FIXME 
+# FIXME
 - Exporting to PDF fails in the "Nested Groups" graph, it doesn't show in the PDF
-##  Basic Timeline With Arrows
-# FIXME 
-- Arrows should start at points when data item is of type:"point"
+-  Arrows should start at points when data item is of type:"point"
+## Basic Timeline With Arrows
 
 ### Controls
 - Mouse drag for horizontal scrolling
