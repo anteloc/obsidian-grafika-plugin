@@ -1,10 +1,12 @@
 # FIXME
 
-##  Vis Network: Basic Graph
+## Vis Network: Basic Graph
 
 ### Controls
+
 - Nodes: click for drag-and-drop
 - Canvas: mouse drag for pan, mouse wheel for zoom
+
 ```visnetwork-js
 // Enable Obsidian DevTools debugging
 // debugger;
@@ -100,8 +102,10 @@ const network = new vis.Network(container, data, options);
 ## Live Update Table Data
 
 ### Controls
+
 - Nodes: click for drag-and-drop
 - Canvas: click for pan, mouse wheel for zoom
+
 ```visnetwork-js
 // Enable Obsidian DevTools debugging
 // debugger;
@@ -208,7 +212,6 @@ updateGraph();
 // Check and update if table data changed
 setInterval(updateGraph, 5000);
 ```
-
 
 | #mikes-relationships | Name  | Relationship |
 | -------------------- | ----- | ------------ |

@@ -1,126 +1,131 @@
 # FIXME
+
 - Export to PDF not working properly, plots are missing from the PDF
 - Zooming in on the page with "Ctrl +" affects plot renderings and animations.
 - Weather data from Open Meteo often not available due to "Too Many Requests" HTTP 429 Error
+
 ## Basic Plot
+
 ### Tips
+
 - Rendering is set to "canvas" by default, change by setting the "renderer" option to "svg" to save on computing resources.
 - Setting width and height is also mandatory
 - Example:
- ```javascript
- 
- const myChart = echarts.init(graphContainer, null, {
-	renderer: "canvas", // or "svg"
-	width: "700px",
-	height: "700px",
+
+```javascript
+const myChart = echarts.init(graphContainer, null, {
+  renderer: "canvas", // or "svg"
+  width: "700px",
+  height: "700px",
 });
 ```
-
 
 ```echarts-js
 // debugger
 const myChart = echarts.init(graphContainer, null, {
-	renderer: "svg",
-	width: "700px",
-	height: "700px",
+  renderer: "svg",
+  width: "700px",
+  height: "700px",
 });
 
 const option = {
   xAxis: {
-    type: 'category',
-    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    type: "category",
+    data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
   },
   yAxis: {
-    type: 'value'
+    type: "value",
   },
   series: [
     {
       data: [150, 230, 224, 218, 135, 147, 260],
-      type: 'line'
-    }
-  ]
+      type: "line",
+    },
+  ],
 };
 
 myChart.setOption(option);
 ```
 
-
 ## JSON Data + Animation
-
 
 ```echarts-js
 // debugger
 const myChart = echarts.init(graphContainer, null, {
-	renderer: "svg",
-	width: "700px",
-	height: "700px",
+  renderer: "svg",
+  width: "700px",
+  height: "700px",
 });
 
 const data = await utils.fileData("demo/data/echarts-package-size.json").json();
 
 const treemapOption = {
-     series: [
-        {
-          type: 'treemap',
-          id: 'echarts-package-size',
-          animationDurationUpdate: 1000,
-          roam: false,
-          nodeClick: undefined,
-          data: data.children,
-          universalTransition: true,
-          label: {
-            show: true
-          },
-          breadcrumb: {
-            show: false
-          }
-        }
-      ]
-    };
-    
-    const sunburstOption = {
-      series: [
-        {
-          type: 'sunburst',
-          id: 'echarts-package-size',
-          radius: ['20%', '90%'],
-          animationDurationUpdate: 1000,
-          nodeClick: undefined,
-          data: data.children,
-          universalTransition: true,
-          itemStyle: {
-            borderWidth: 1,
-            borderColor: 'rgba(255,255,255,.5)'
-          },
-          label: {
-            show: false
-          }
-        }
-      ]
-    };
-    
-    let currentOption = treemapOption;
-    
-    myChart.setOption(currentOption);
+  series: [
+    {
+      type: "treemap",
+      id: "echarts-package-size",
+      animationDurationUpdate: 1000,
+      roam: false,
+      nodeClick: undefined,
+      data: data.children,
+      universalTransition: true,
+      label: {
+        show: true,
+      },
+      breadcrumb: {
+        show: false,
+      },
+    },
+  ],
+};
 
-	function switchOption() { 
-      currentOption = (currentOption === treemapOption) 
-	      ? sunburstOption 
-	      : treemapOption;
-	      
-	    myChart.setOption(currentOption);
-    }
+const sunburstOption = {
+  series: [
+    {
+      type: "sunburst",
+      id: "echarts-package-size",
+      radius: ["20%", "90%"],
+      animationDurationUpdate: 1000,
+      nodeClick: undefined,
+      data: data.children,
+      universalTransition: true,
+      itemStyle: {
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,.5)",
+      },
+      label: {
+        show: false,
+      },
+    },
+  ],
+};
 
-    setInterval(switchOption, 3000);
+let currentOption = treemapOption;
 
+myChart.setOption(currentOption);
+
+function switchOption() {
+  currentOption =
+    currentOption === treemapOption ? sunburstOption : treemapOption;
+
+  myChart.setOption(currentOption);
+}
+
+setInterval(switchOption, 3000);
 ```
 
 ## Table Data + Live Update
 
 ### Tips
+
 - Change #sales-table data and the plot will update itself automatically
+
 ```echarts-js
-const myChart = echarts.init(graphContainer);
+const myChart = echarts.init(graphContainer, null, {
+  renderer: "svg",
+  width: "700px",
+  height: "700px",
+});
 
 async function updateChart() {
   const salesData = await utils.tableData("#sales-table", true);
@@ -176,7 +181,6 @@ updateChart();
 setInterval(updateChart, 1000);
 ```
 
-
 | #sales-table | Company       | Number of Products | Sales | Percentage of Market Share |
 | ------------ | ------------- | ------------------ | ----- | -------------------------- |
 |              | Foo Inc.      | 5                  | 5500  | 3                          |
@@ -185,15 +189,16 @@ setInterval(updateChart, 1000);
 |              | Quux Holdings | 18                 | 24400 | 10                         |
 |              | Grok & Sons   | 22                 | 32000 | 42                         |
 
-
 ## Public Data + REST Endpoint + Live Update
+
 ### Tips
-- Press on "Analyze with AI" button and after a few seconds, an AI-generated plot analysis text will appear under the plot. 
+
+- Press on "Analyze with AI" button and after a few seconds, an AI-generated plot analysis text will appear under the plot.
 - You will need an OpenAI account with access to gpt-4-turbo and configure an API key in Grafika Settings for this to work!
 - For retrieving online temperature data information, you will need to:
-	- Create a (free) account at https://www.weatherapi.com/ 
-	- Get the API Key from weatherapi's Dashboard > API
-	- Add the API Key to Grafika's Settings, with the name: weatherapi.com
+  - Create a (free) account at https://www.weatherapi.com/
+  - Get the API Key from weatherapi's Dashboard > API
+  - Add the API Key to Grafika's Settings, with the name: weatherapi.com
 
 ```echarts-js
 // debugger
@@ -204,9 +209,7 @@ const weatherapiUrl = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}
 const colors = ["#ABA5FF", "#FF0077"];
 
 const myChart = echarts.init(graphContainer, null, {
-  renderer: "canvas",
-  width: "700px",
-  height: "700px",
+  renderer: "svg",
 });
 
 const baseOption = {
@@ -315,7 +318,7 @@ async function updateData() {
   }));
 
   const dateTimes = weatherData.map(({ dateTime }) => dateTime);
-  
+
   const temperatures = weatherData.map(({ dateTime, temperature }) => [
     dateTime,
     temperature,
@@ -350,19 +353,88 @@ updateData();
 
 // Periodic renders, set to 1 min to avoid overloading open-meteo
 setInterval(updateData, 60000);
-
 ```
 
-
 ## Globe 3D
+
 ### Tips
+
 - These are the near real-time temperatures for the 500 most populated places in the world.
 - For retrieving online temperature data information, you will need to:
-	- Create a (free) account at https://www.weatherapi.com/ 
-	- Get the API Key from weatherapi's Dashboard > API
-	- Add the API Key to Grafika's Settings, with the name: weatherapi.com
+  - Create a (free) account at https://www.weatherapi.com/
+  - Get the API Key from weatherapi's Dashboard > API
+  - Add the API Key to Grafika's Settings, with the name: weatherapi.com
 
-```echarts-js
+```echarts-js-disabled
+
+let chartDom = document.createElement('canvas');
+chartDom.width = 500;
+chartDom.height = 500;
+
+let myChart2 = echarts.init(chartDom, 'dark');
+let option2;
+
+function createNodes(widthCount, heightCount) {
+  let nodes = [];
+  for (let i = 0; i < widthCount; i++) {
+    for (let j = 0; j < heightCount; j++) {
+      nodes.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        value: 1
+      });
+    }
+  }
+  return nodes;
+}
+function createEdges(widthCount, heightCount) {
+  let edges = [];
+  for (let i = 0; i < widthCount; i++) {
+    for (let j = 0; j < heightCount; j++) {
+      if (i < widthCount - 1) {
+        edges.push({
+          source: i + j * widthCount,
+          target: i + 1 + j * widthCount,
+          value: 1
+        });
+      }
+      if (j < heightCount - 1) {
+        edges.push({
+          source: i + j * widthCount,
+          target: i + (j + 1) * widthCount,
+          value: 1
+        });
+      }
+    }
+  }
+  return edges;
+}
+let nodes = createNodes(50, 50);
+let edges = createEdges(50, 50);
+option2 = {
+  series: [
+    {
+      type: 'graphGL',
+      nodes: nodes,
+      edges: edges,
+      itemStyle: {
+        color: 'rgba(255,255,255,0.8)'
+      },
+      lineStyle: {
+        color: 'rgba(255,255,255,0.8)',
+        width: 3
+      },
+      forceAtlas2: {
+        steps: 5,
+        jitterTolerence: 10,
+        edgeWeightInfluence: 4
+      }
+    }
+  ]
+};
+
+myChart2.setOption(option2)
+
 // Represent the current temperature in the 500 most populated places in the world
 
 // Online weather data provider: weatherapi.
@@ -454,6 +526,10 @@ const baseOption = {
       colorAlpha: 0,
     },
   },
+  layers: [{type: 'overlay',
+        texture: myChart2,
+        shading: 'lambert',
+        distance: 5}],
   series: [
     {
       name: "Temperature",
@@ -509,6 +585,7 @@ async function updatePlot() {
         data: data,
       },
     ],
+
   };
 
   myChart.setOption(option);
@@ -521,5 +598,3 @@ myChart.setOption(baseOption);
 updatePlot();
 
 ```
-
-

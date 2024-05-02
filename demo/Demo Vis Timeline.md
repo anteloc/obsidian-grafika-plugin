@@ -1,9 +1,12 @@
 # FIXME
+
 - Exporting to PDF fails in the "Nested Groups" graph, it doesn't show in the PDF
--  Arrows should start at points when data item is of type:"point"
+- Arrows should start at points when data item is of type:"point"
+
 ## Basic Timeline With Arrows
 
 ### Controls
+
 - Mouse drag for horizontal scrolling
 - Mouse wheel for zoom
 - Hover on arrow to show a tooltip
@@ -105,14 +108,12 @@ const arrowsOptions = {
 
 // Create instance of Arrow for a timeline objetc and its denpedencies
 const myArrow = new Arrow(timeline, dependency, arrowsOptions);
-
 ```
 
-
-
-##  Vis Graph2D: Nested Groups
+## Vis Graph2D: Nested Groups
 
 ### Controls
+
 - Mouse drag or mouse wheel for horizontal scrolling
 - Ctrl + mouse wheel for zoom
 
@@ -252,7 +253,6 @@ function randomIntFromInterval(min, max) {
 }
 
 let startDay = moment().startOf("month").startOf("week").isoWeekday(1);
-
 
 // Create a DataSet (allows two way data-binding)
 let now = moment().minutes(0).seconds(0).milliseconds(0);

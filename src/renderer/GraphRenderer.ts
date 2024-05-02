@@ -7,7 +7,7 @@ import moment from "moment";
 import voca from "voca";
 
 export class GraphRenderer {
-    private sandoxedRenderer: SandboxedRenderer;
+    private sandboxedRenderer: SandboxedRenderer;
 
     constructor(
         private sourceCode: string,
@@ -38,7 +38,7 @@ export class GraphRenderer {
             graphSourceCode,
         };
 
-        this.sandoxedRenderer = new SandboxedRenderer(
+        this.sandboxedRenderer = new SandboxedRenderer(
             codeFragments,
             this.api.dependencies(),
             this.handleScreenshotCaptured.bind(this),
@@ -47,10 +47,10 @@ export class GraphRenderer {
     }
 
     public async start() {
-        await this.sandoxedRenderer.renderGraph();
+        await this.sandboxedRenderer.renderGraph();
 
         this.rendererEls.analyzeButton.addEventListener("click", () => {
-            this.sandoxedRenderer.takeScreenshot(`analyze-${uuid()}`);
+            this.sandboxedRenderer.takeScreenshot(`analyze-${uuid()}`);
         });
     }
 
