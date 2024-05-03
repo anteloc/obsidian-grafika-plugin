@@ -106,6 +106,10 @@ fi
 
 # Show version information to the user and ask for confirmation
 echo "Preparing release, current version: $current_version, new version: $VERSION"
+echo "Verify that the following are up-to-date: "
+echo "  - README.md"
+echo "  - Directory 'demo'"
+echo "  - Directory 'docs'"
 echo "Do you want to continue? (y/n)"
 read -r response
 
@@ -114,9 +118,11 @@ if [ "$response" != "y" ]; then
     exit 0
 fi
 
+./codeblocks-formatter.sh $root_dir/demo
+
 set_version $VERSION
 replace_version $VERSION
 create_tag $VERSION
-echo "Release prepared. Now run the following commands to start building the release at Github:"
+echo "Release prepared. Now run the following to start building the release at Github:"
 echo "  git push origin master"
 
