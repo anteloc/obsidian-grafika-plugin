@@ -55,7 +55,7 @@ There are several demos available for downloading and playing around:
 ![try-it-demo-setup](docs/assets/images/try-it-demo-setup.png)
 
 
-> [!NOTE] Hidded data files
+> [!NOTE] Hidden data files
 > - Data files are located under the **data** and **data-gl** folders. 
 > - Files in JSON, CSV and other formats will **not show** on Obsidian's File Explorer.
 > - Access those files by **right-clicking on data or data-gl folder > Show in system explorer **
@@ -72,8 +72,7 @@ A short video showing:
 - Some of the required **JavaScript code** to create them
 - And also how **AI Plot Analysis** works
 
-
-![demo-video-2024-05-03_17-49-32](docs/assets/videos/demo-video-2024-05-03_17-49-32.mp4)
+[Watch this video](https://youtu.be/PrKL0OJKThg)
 
 #### Screenshots
 
