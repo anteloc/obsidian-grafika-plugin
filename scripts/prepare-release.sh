@@ -127,5 +127,5 @@ set_version $VERSION
 replace_version $VERSION
 create_tag $VERSION
 echo "Release prepared. Now run the following to start building the release at Github:"
-echo "  git push origin master"
+echo "  git push && git push --tags"
 
