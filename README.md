@@ -1,7 +1,7 @@
 # Grafika
 
 
-> [!warning] Warning
+> [!WARNING]
 > This plugin is still at an **experimental** **Proof-of-Concept (POC)** stage.
 > Even though this plugin is stable enough to try and use, _performance_ 
 > and _usability_ are still **WIP**.
@@ -16,7 +16,8 @@ This is an **Obsidian plugin** for rendering **graph, chart and plot visualizati
 	- Get **AI Insights** for a plot just by **clicking a button!**
 	- **Customize** the analysis by configuring your own **System** and **User prompts**
 		
-> [!NOTE] OpenAI Requirements
+> [!IMPORTANT]
+> **OpenAI Analysis** feature requires:
 > - An **OpenAI account** and **API Key**.
 > -  Access to **gpt-4-turbo model** via **OpenAI's API**
 
@@ -55,7 +56,7 @@ There are several demos available for downloading and playing around:
 ![try-it-demo-setup](docs/assets/images/try-it-demo-setup.png)
 
 
-> [!NOTE] Hidden data files
+> [!NOTE]
 > - Data files are located under the **data** and **data-gl** folders. 
 > - Files in JSON, CSV and other formats will **not show** on Obsidian's File Explorer.
 > - Access those files by **right-clicking on data or data-gl folder > Show in system explorer **
@@ -145,6 +146,7 @@ npm install
 ## Support
 
 If you are currently enjoying this plugin, and maybe has saved you **time and effort** worth inviting me a coffee, consider **supporting** my work by **buying me one**!
+
 [<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="200">](https://www.buymeacoffee.com/anteloc)
 
 
