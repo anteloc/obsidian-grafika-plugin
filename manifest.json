@@ -3,7 +3,7 @@
 	"name": "Grafika",
 	"version": "0.5.0",
 	"minAppVersion": "1.5.11",
-	"description": "Obsidian plugin for embedding plots, charts and graphs in markdown documents, currently supporting Echarts, Chart.js and vis.js network and timeline",
+	"description": "Create and analyze with AI: plots, charts and graphs with Apache ECharts, Chart.js and vis.js network and timeline graphs",
 	"author": "Carlos Antelo",
 	"authorUrl": "https://github.com/anteloc/obsidian-grafika-plugin",
 	"fundingUrl": "https://buymeacoffee.com/anteloc",

@@ -3,31 +3,84 @@
 
 > [!warning] Warning
 > This plugin is still at an **experimental** **Proof-of-Concept (POC)** stage.
-> Even though this plugin is stable enough to try and use, performance 
-> and usability are still **WIP**.
+> Even though this plugin is stable enough to try and use, _performance_ 
+> and _usability_ are still **WIP**.
 
-This is an **Obsidian plugin** for rendering graphs, charts and plots embedded into **Obsidian's Markdown notes**.
+This is an **Obsidian plugin** for rendering **graph, chart and plot visualizations** embedded into **Obsidian's Markdown notes**.
 
-- **Write Markdown**  with some **JavaScript code fence blocks** inside: they will be rendered as **graphs, charts and plots.** 
-- **AI Analysis:** 
-	- **AI insights** for a plot just by clicking on a button!
+## Features
+
+- **Create** Markdown notes with **embedded visualizations** of different kinds.
+- **Build & Share Dashboards** with **interactive** and **live** charts, graphs and plots.
+- **OpenAI's Analysis**
+	- Get **AI Insights** for a plot just by **clicking a button!**
 	- **Customize** the analysis by configuring your own **System** and **User prompts**
-	- **NOTES**: 
-		- You will need an **OpenAI account** and **API Key** for AI Analysis to work.
-		- Only **gpt-4-turbo model** is currently supported.
-- **Create dashboards in Markdown**, with embedded charts, graphs and plots.
-- **Share your dashboards**: you only need to share some Markdown files with some embedded JavaScript inside!
+		
+> [!NOTE] OpenAI Requirements
+> - An **OpenAI account** and **API Key**.
+> -  Access to **gpt-4-turbo model** via **OpenAI's API**
 
-It currently supports creating charts, graphs and plots with the following libraries:
-- [Apache echarts](https://echarts.apache.org/en/index.html)
-- [ChartJs](https://www.chartjs.org/)
-- [visjs network and timeline graphs](https://visjs.org/)
+#### Visualization Libraries
 
-I made an effort in order to make it easy adapting the **source code** from those libraries' **plot examples** to work with **very few changes**:
+**Write JavaScript code fence blocks** for rendering visualizations with different libraries:
+- [Apache ECharts](https://echarts.apache.org/en/index.html)
+- [Chart.js](https://www.chartjs.org/)
+- [visjs](https://visjs.org/) (network and timeline graphs **only**!)
 
-1. **Copy-and-paste** a plot code example directly into a code fence block.
-2. **Adapt** the code example according to the instructions (**WIP**).
+#### Adapt & Reuse Examples
+
+There are plenty of **code examples** at the websites for the supported [#Visualization Libraries](#Visualization%20Libraries).
+Many of them are **easy to adapt** to code fence blocks, saving a considerable **amount of time:** 
+
+1. **Copy-and-paste example code** directly into a **code fence block**.
+2. **Adapt** the example code according to the instructions (**WIP**).
 3. **Click outside** the code fence block to see the results.
+
+## Try It!
+
+There are several demos available for downloading and playing around:
+
+- **Animated** & **Interactive** plots
+- **Plotting data** from different data sources:
+	- **Online** sources, like **HTTP REST endpoints**
+	- **Markdown tables**
+	- Local **CSV** & **JSON** data files
+
+### Setup
+
+1. [Install Grafika](#How%20to%20Install)
+2. **Download** the zipped demo files: [demo-__RELEASE_VERSION__.zip](https://github.com/anteloc/obsidian-grafika-plugin/releases/download/__RELEASE_VERSION__/demo-__RELEASE_VERSION__.zip)
+3. **Uncompress** it into your vault
+
+![try-it-demo-setup](docs/assets/images/try-it-demo-setup.png)
+
+
+> [!NOTE] Hidded data files
+> - Data files are located under the **data** and **data-gl** folders. 
+> - Files in JSON, CSV and other formats will **not show** on Obsidian's File Explorer.
+> - Access those files by **right-clicking on data or data-gl folder > Show in system explorer **
+
+
+### Showcase
+
+Have a look at the following **video** and **screenshots** in order to get a feeling of the possibilities!
+#### Video
+
+A short video showing:
+
+- **Animated** and **interactive** visualizations
+- Some of the required **JavaScript code** to create them
+- And also how **AI Plot Analysis** works
+
+
+![demo-video-2024-05-03_17-49-32](docs/assets/videos/demo-video-2024-05-03_17-49-32.mp4)
+
+#### Screenshots
+
+- [Markdown table data plot](docs/assets/images/demo-table-plot.png)
+- [File data plot](docs/assets/images/demo-csv-plot.png)
+- [Interactive Earth 3D showing real-time weather data](docs/assets/images/demo-3d-globe-weather.png)
+- [Interactive force graph](docs/assets/images/demo-force-graph.png)
 
 ## How to Install
 
@@ -37,20 +90,20 @@ There are currently two supported methods for installing this plugin:
 
 1. Install **BRAT Plugin** from the **Community Plugins** in Obsidian
 
-2. In **Obsidian's Settings**, add **Grafika's Github repository URL** 
-	`https://github.com/anteloc/obsidian-grafika-plugin` 
-	to **BRAT's Beta Plugin List**:
+2. In **Obsidian's Settings**
+	1. **BRAT > Add Beta Plugin > Github repository for...** 
+	2. Set to: https://github.com/anteloc/obsidian-grafika-plugin
+	3. Restart **Obsidian**
 
 ![brat-step-01](docs/assets/images/brat-step-01.png)
 
 ![brat-step-02](docs/assets/images/brat-step-02.png)
 
-3. Restart **Obsidian**
 
 ### Method 2 - Manual install 
 
 - **Requirements**: 
-	- nodejs **v20.x**
+	- Node.js **v20.x**
 
 1. In **Obsidian**, create a new vault with name: `my-vault` 
 
@@ -58,7 +111,8 @@ There are currently two supported methods for installing this plugin:
 
 ![my-vault-step-02](docs/assets/images/my-vault-step-02.png)
 
-2. **If it doesn't exist**, create a new `plugins` folder under your vault's `.obsidian` folder. On some systems, this `.obsidian` folder will be **hidden**.
+2. **If it doesn't exist**, create a new `plugins` folder under your vault's `.obsidian` folder. 
+	- On some systems, this `.obsidian` folder will be **hidden**.
 
 ![my-vault-step-03](docs/assets/images/my-vault-step-03.png)
 
@@ -81,25 +135,16 @@ cd obsidian-grafika-plugin
 npm install
 ```
 
-4. Open your `my-vault` in **Obsidian** and [Turn on community plugins](https://help.obsidian.md/Extending+Obsidian/Community+plugins#Browse+community+plugins) if required.
+5. Open your `my-vault` in **Obsidian** and [Turn on community plugins](https://help.obsidian.md/Extending+Obsidian/Community+plugins#Browse+community+plugins) if required.
 
-5. In **Obsidian's Settings**, enable **Grafika** if required and **restart Obsidian** afterwards:
+6. In **Obsidian's Settings**, enable **Grafika** if required and **restart Obsidian** afterwards:
 
 ![my-vault-step-04](docs/assets/images/my-vault-step-04.png)
 
 
-# Usage
-
-### WIP
-
-1. Manually install Grafika on Obsidian - TODO Add instructions
-2. Download the `demo` folder and copy it inside your vault
-3. Open the Demo XXX.md files
-4. Experiment with the charts and plots by editing the JavaScript code fences to see the results
-
 ## Support
 
-If you think this plugin saved you **time and effort** worth inviting me a coffee,  **support** my work by buying me one!
+If you are currently enjoying this plugin, and maybe has saved you **time and effort** worth inviting me a coffee, consider **supporting** my work by **buying me one**!
 [<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="200">](https://www.buymeacoffee.com/anteloc)
 
 

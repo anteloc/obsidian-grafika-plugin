@@ -2,7 +2,6 @@
 
 - Export to PDF not working properly, plots are missing from the PDF
 - Zooming in on the page with "Ctrl +" affects plot renderings and animations.
-- Weather data from Open Meteo often not available due to "Too Many Requests" HTTP 429 Error
 
 ## Basic Plot
 
