@@ -21,14 +21,14 @@ This is an **Obsidian plugin** for rendering **graph, chart and plot visualizati
 > - An **OpenAI account** and **API Key**.
 > -  Access to **gpt-4-turbo model** via **OpenAI's API**
 
-#### Visualization Libraries
+### Visualization Libraries
 
 **Write JavaScript code fence blocks** for rendering visualizations with different libraries:
 - [Apache ECharts](https://echarts.apache.org/en/index.html)
 - [Chart.js](https://www.chartjs.org/)
 - [visjs](https://visjs.org/) (network and timeline graphs **only**!)
 
-#### Adapt & Reuse Examples
+### Adapt & Reuse Examples
 
 There are plenty of **code examples** at the websites for the supported [#Visualization Libraries](#Visualization%20Libraries).
 Many of them are **easy to adapt** to code fence blocks, saving a considerable **amount of time:** 
@@ -39,7 +39,7 @@ Many of them are **easy to adapt** to code fence blocks, saving a considerable *
 
 ## Try It!
 
-There are several demos available for downloading and playing around:
+There are several demos available for downloading and playing around with:
 
 - **Animated** & **Interactive** plots
 - **Plotting data** from different data sources:
@@ -59,7 +59,7 @@ There are several demos available for downloading and playing around:
 > [!NOTE]
 > - Data files are located under the **data** and **data-gl** folders. 
 > - Files in JSON, CSV and other formats will **not show** on Obsidian's File Explorer.
-> - Access those files by **right-clicking on data or data-gl folder > Show in system explorer **
+> - Access those files by **right-clicking on data or data-gl folder > Show in system explorer**
 
 
 ### Showcase
@@ -71,7 +71,7 @@ A short video showing:
 
 - **Animated** and **interactive** visualizations
 - Some of the required **JavaScript code** to create them
-- And also how **AI Plot Analysis** works
+- And also how **AI Plot Analysis** works!
 
 
 [![Grafika - Embedded Visualizations for Obsidian](docs/assets/images/demo-video-preview.png)](https://www.youtube.com/watch?v=PrKL0OJKThg "Grafika Demo Video")
@@ -150,3 +150,5 @@ If you are currently enjoying this plugin, and maybe has saved you **time and ef
 [<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="200">](https://www.buymeacoffee.com/anteloc)
 
 
+## Acknowledgements
+**TBD**
