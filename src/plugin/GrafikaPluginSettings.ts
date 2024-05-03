@@ -43,9 +43,9 @@ class AddAPIKeyModal extends Modal {
     onOpen() {
         const { contentEl } = this;
 
-        contentEl.createEl("h1", { text: "Add API Key" });
+        contentEl.createEl("h1", { text: "Add API key" });
 
-        new Setting(contentEl).setName("API Name").addText((text) =>
+        new Setting(contentEl).setName("API name").addText((text) =>
             text.onChange((value) => {
                 this.apiName = value;
             }),
@@ -106,7 +106,7 @@ export class GrafikaSettingTab extends PluginSettingTab {
         new Setting(containerEl).setName("OpenAI").setHeading();
 
         new Setting(containerEl)
-            .setName("GPT API Key")
+            .setName("GPT API key")
             .setDesc("Required for analyzing plots with GPT")
             .addText((text) =>
                 text
@@ -134,7 +134,7 @@ export class GrafikaSettingTab extends PluginSettingTab {
             });
 
         new Setting(containerEl)
-            .setName("System Prompt")
+            .setName("System prompt")
             .setDesc("GPT will assume the role described in this prompt")
             .addTextArea((text) => {
                 const el = text.inputEl;
@@ -158,9 +158,9 @@ export class GrafikaSettingTab extends PluginSettingTab {
             });
 
         new Setting(containerEl)
-            .setName("Analyze Plot Prompt")
+            .setName("Analyze graph prompt")
             .setDesc(
-                "GPT will analyze the plot according to the instructions in this prompt",
+                "GPT will analyze the graph according to the instructions in this prompt",
             )
             .addTextArea((text) => {
                 const el = text.inputEl;
@@ -186,7 +186,7 @@ export class GrafikaSettingTab extends PluginSettingTab {
             });
 
         new Setting(containerEl)
-            .setName("Max Words")
+            .setName("Max words")
             .setDesc("Maximum number of words in GPT's response")
             .addText((text) => {
                 text.setValue(openai.maxWords.toString()).onChange(
@@ -206,7 +206,7 @@ export class GrafikaSettingTab extends PluginSettingTab {
         const externalApiKeys = this.plugin.settings.externalApiKeys;
 
         new Setting(containerEl)
-            .setName("API Keys")
+            .setName("API keys")
             .setHeading()
             .addButton((button) => {
                 button.setButtonText("+").onClick(() => {

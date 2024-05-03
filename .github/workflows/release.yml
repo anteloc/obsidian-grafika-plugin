@@ -28,7 +28,9 @@ jobs:
         run: |
           tag="${GITHUB_REF#refs/tags/}"
 
+          zip -r demo-${tag}.zip ./demo
+
           gh release create "$tag" \
             --title="$tag" \
             --draft \
-            main.js manifest.json styles.css
+            main.js manifest.json styles.css demo-${tag}.zip

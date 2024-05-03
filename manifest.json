@@ -6,6 +6,6 @@
 	"description": "Obsidian plugin for embedding plots, charts and graphs in markdown documents, currently supporting Echarts, Chart.js and vis.js network and timeline",
 	"author": "Carlos Antelo",
 	"authorUrl": "https://github.com/anteloc/obsidian-grafika-plugin",
-	"fundingUrl": "https://changeme",
+	"fundingUrl": "https://buymeacoffee.com/anteloc",
 	"isDesktopOnly": true
 }
