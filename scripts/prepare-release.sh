@@ -3,16 +3,19 @@
 root_dir="$(dirname $0)/.."
 
 function usage() {
-    echo "$0 --version [auto | x.y.z]"
+    echo "Usage: $0 --version [auto | x.y.z]"
     echo "
     This script should **always** be run on the 'master' branch.
     It will prepare a new release by doing the following:
     1. Set the new version number in manifest.json, package.json and other files if needed. 
     - If version=x.y.z, it will set that version number.
-    - If version=auto, it will:
-        1. Set x = current major version number
-        2. Set y = current minor version number + 1
-        3. Set z = 0
+    - If version=auto, it will calculate a new x.y.z version number by doing the following:
+        1. x = current major version number
+        2. y = current minor version number + 1
+        3. z = 0
+        
+        E. g., if current version is 1.2.3, the new version will be 1.3.0
+
     2. Replace the __RELEASE_VERSION__ placeholder by that new version number 
         on *.md files and other files if needed.
     3. Create a new tag for the new version
