@@ -50,7 +50,7 @@ There are several demos available for downloading and playing around with:
 ### Setup
 
 1. [Install Grafika](#How%20to%20Install)
-2. **Download** the zipped demo files: [demo-__RELEASE_VERSION__.zip](https://github.com/anteloc/obsidian-grafika-plugin/releases/download/__RELEASE_VERSION__/demo-__RELEASE_VERSION__.zip)
+2. **Download** the zipped demo files: [demo-0.6.0.zip](https://github.com/anteloc/obsidian-grafika-plugin/releases/download/0.6.0/demo-0.6.0.zip)
 3. **Uncompress** it into your vault
 
 ![try-it-demo-setup](docs/assets/images/try-it-demo-setup.png)
