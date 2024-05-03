@@ -72,7 +72,8 @@ A short video showing:
 - Some of the required **JavaScript code** to create them
 - And also how **AI Plot Analysis** works
 
-[Watch this video](https://youtu.be/PrKL0OJKThg)
+
+[![Grafika - Embedded Visualizations for Obsidian](docs/assets/images/demo-video-preview.png)](https://www.youtube.com/watch?v=PrKL0OJKThg "Grafika Demo Video")
 
 #### Screenshots
 
