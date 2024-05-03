@@ -1,7 +1,7 @@
 {
 	"id": "grafika",
 	"name": "Grafika",
-	"version": "0.5.0",
+	"version": "0.6.0",
 	"minAppVersion": "1.5.11",
 	"description": "Create and analyze with AI: plots, charts and graphs with Apache ECharts, Chart.js and vis.js network and timeline graphs",
 	"author": "Carlos Antelo",

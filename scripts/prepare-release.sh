@@ -50,13 +50,16 @@ function set_version() {
 
 function replace_version() {
     local version=$1
-    local files=$(grep -r -l "__RELEASE_VERSION__" $root_dir | grep -v prepare-release.sh)
+    # Replace the __RELEASE_VERSION__ placeholder by the new version number in template markdown files
+    local templates=$(grep -r -l "__RELEASE_VERSION__" $root_dir | grep -v prepare-release.sh | grep '.*-template.md')
 
-    echo "Setting version $version in the following files:"
+    echo "Setting version $version in the following templates:"
 
-    for file in $files; do
-        echo "  $file"
-        sed -i "s/__RELEASE_VERSION__/$version/g" $file
+    for template in $templates; do
+        local file="${template/-template/}"
+        cp "$template" "$file"
+        echo "  $template -> $file"
+        sed -i "s/__RELEASE_VERSION__/$version/g" "$file"
     done
 }
 
@@ -65,7 +68,7 @@ function create_tag() {
 
     echo "Creating tag: $version"
 
-    git add $root_dir/manifest.json $root_dir/package.json
+    git add $root_dir
     git commit -m "Release version $version"
     git tag -a $version -m "$version"
 }
@@ -118,7 +121,7 @@ if [ "$response" != "y" ]; then
     exit 0
 fi
 
-./codeblocks-formatter.sh $root_dir/demo
+$root_dir/scripts/codeblocks-formatter.sh $root_dir/demo
 
 set_version $VERSION
 replace_version $VERSION
